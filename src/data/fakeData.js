@@ -358,3 +358,14 @@ export const fiveDayForecastData = {
         }
     ]
 }
+
+const favoriteCities = [
+    {
+        "Key": "182536",
+        "cityName": "Athens",
+    },
+    {
+        "Key": "316938",
+        "cityName": "Ankara",
+    }   
+]

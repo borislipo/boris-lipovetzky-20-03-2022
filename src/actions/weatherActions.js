@@ -1,6 +1,6 @@
 import { types, componentTypes } from "../types/types";
 import { apiKey, url } from "../api/config";
-import { setError, removeError, startLoading, finishLoading, forecastLoaded, forecastLoading, forecastSetError } from "./uiActions";
+import { setError, removeError, startLoading, finishLoading } from "./uiActions";
 
 
 export const startGetCitiesList = (query) => {
@@ -30,14 +30,14 @@ export const getCitiesList = (payload)=>{
     }
 }
 
-export const startGetCityCurrentWeather = (Key) => {
+export const startGetCityCurrentWeather = (Key, label) => {
 
     return async (dispatch) => {
         try {
             dispatch(startLoading(componentTypes.currentWeather));
             const response = await fetch(`${url}/currentconditions/v1/${Key}?apikey=${apiKey}`);
             const data = await response.json();
-            dispatch(getCityCurrentWeather(data[0]));
+            dispatch(getCityCurrentWeather({weatherData : data[0], cityName: label}));
             dispatch(finishLoading(componentTypes.currentWeather));
         } catch (error) {
             dispatch(setError(error.message, componentTypes.currentWeather));

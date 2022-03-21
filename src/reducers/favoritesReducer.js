@@ -4,7 +4,7 @@ export const favoritesReducer = (state = {}, action) => {
     const { type, payload } = action;
 
     switch (type) {
-        case types.favorites:
+        case types.setfavorite:
             return {
                 ...state,
                 favorites: payload

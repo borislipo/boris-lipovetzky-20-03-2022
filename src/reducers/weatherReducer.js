@@ -8,7 +8,8 @@ export const weatherReducer = (state = {}, action) => {
         case types.currentWeather:
             return {
                 ...state,
-                currentWeather: payload
+                currentWeather: payload.weatherData,
+                cityName: payload.cityName
             };
         case types.fiveDayForecast:
             return {
