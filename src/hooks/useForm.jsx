@@ -11,7 +11,6 @@ export const useForm = (initialState = {}) => {
 
 
     const handleInputChange = (e, newValue) => {
-        console.log(e)
         setValues({
             ...values,
             [e.target.id.split("-")[0]]: newValue

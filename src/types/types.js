@@ -10,3 +10,10 @@ export const types = {
     uiForecastLoading: '[UI] ForecastLoading',
     uiForecastLoaded: '[UI] ForecastLoaded',
 }
+
+export const componentTypes={
+    autocomplete: 'autocomplete',
+    currentWeather: 'currentWeather',
+    fiveDayForecast: 'fiveDayForecast',
+    favorites: 'favorites',
+}

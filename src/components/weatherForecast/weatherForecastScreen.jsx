@@ -1,16 +1,17 @@
 import { useEffect, useState, useMemo } from "react";
 import { useDispatch, useSelector } from 'react-redux';
-import { useForm } from "../../hooks/useForm";
-import { startGetCitiesList, startGetCityCurrentWeather } from "../../actions/weatherActions";
 import { useNavigate, useLocation } from 'react-router-dom'
+import { useForm } from "../../hooks/useForm";
+import { componentTypes } from "../../types/types";
+import { startGetCitiesList, startGetCityCurrentWeather, startGetCityFiveDayForecast } from "../../actions/weatherActions";
 import queryString from 'query-string';
 import TextField from '@mui/material/TextField';
 import Autocomplete from '@mui/material/Autocomplete';
 import CircularProgress from '@mui/material/CircularProgress';
 
 export const WeatherForecastScreen = () => {
-    const { citiesList, currentWeather } = useSelector(state => state.weather);
-    const { loading } = useSelector(state => state.ui);
+    const { citiesList, currentWeather, fiveDayForecast } = useSelector(state => state.weather);
+    const { loading, component } = useSelector(state => state.ui);
     const navigate = useNavigate()
     const location = useLocation()
     const dispatch = useDispatch();
@@ -18,16 +19,16 @@ export const WeatherForecastScreen = () => {
         cityInput: '',
     })
     const [open, setOpen] = useState(false);
-    const [options, setOptions] = useState([]);
     const { cityInput } = formValues;
-    const { q } = queryString.parse(location.search)
-    const citySearchQuery = q
+    const { q, cityQuery } = queryString.parse(location.search)
+    const citySearchQuery = q;
+    const cityLabelQuery = cityQuery;
     const cityKey = citiesList?.find(city => city.label === cityInput)?.key
+    const cityLabel = citiesList?.find(city => city.label === cityInput)?.label
 
 
-    useMemo(() => 
-    dispatch(startGetCityCurrentWeather(citySearchQuery)
-    ), [citySearchQuery])
+    useMemo(() => citySearchQuery && dispatch(startGetCityCurrentWeather(citySearchQuery)), [citySearchQuery])
+    useMemo(() => citySearchQuery && dispatch(startGetCityFiveDayForecast(citySearchQuery)), [citySearchQuery])
 
     useEffect(() => {
        
@@ -68,7 +69,7 @@ export const WeatherForecastScreen = () => {
                             ...params.InputProps,
                             endAdornment: (
                                 <>
-                                    {loading ? <CircularProgress color="inherit" size={20} /> : null}
+                                    {loading && component === componentTypes.autocomplete  ? <CircularProgress color="inherit" size={20} /> : null}
                                     {params.InputProps.endAdornment}
                                 </>
                             ),
@@ -76,9 +77,21 @@ export const WeatherForecastScreen = () => {
                     />
                 )}
             />
-            <button onClick={() => navigate(`?q=${cityKey}`)}>Search</button>
+            <button onClick={() => navigate(`?q=${cityKey}&cityQuery=${cityLabel}`)}>Search</button>
             <div>
-                {JSON.stringify(currentWeather, null, 2)}
+                {
+                    loading && component === componentTypes.current ? <CircularProgress color="inherit" size={150} /> : null
+
+                }
+                {
+                    !loading && currentWeather && currentWeather.WeatherText ? <h1>{cityLabelQuery}{currentWeather.WeatherText}</h1> : null
+                }
+                {
+                    loading && component === componentTypes.fiveDayForecast ? <CircularProgress color="inherit" size={150} /> : null
+                }
+                {
+                    !loading && fiveDayForecast && fiveDayForecast.length > 0 ? fiveDayForecast.map(day => <h1 key={day.EpochDate}>{day.Date}</h1>) : null
+                }
             </div>
 
         </div>

@@ -7,37 +7,26 @@ export const uiReducer = (state = {}, action) => {
         case types.uiSetError:
             return {
                 ...state,
-                error: payload
+                error: payload.msg,
+                component: payload.component
             };
         case types.uiRemoveError:
             return {
                 ...state,
-                error: null
+                error: null,
+                component: payload.component
             };
         case types.uiStartLoading:
             return {
                 ...state,
-                loading: true
+                loading: true,
+                component: payload.component
             };
         case types.uiFinishLoading:
             return {
                 ...state,
-                loading: false
-            };
-        case types.uiForecastLoading:
-            return {
-                ...state,
-                forecastLoading: true
-            };
-        case types.uiForecastLoaded:
-            return {
-                ...state,
-                forecastLoading: false
-            };
-        case types.uiForecastSetError:
-            return {
-                ...state,
-                forecastError: payload
+                loading: false,
+                component: payload.component
             };
         default:
             return state;
