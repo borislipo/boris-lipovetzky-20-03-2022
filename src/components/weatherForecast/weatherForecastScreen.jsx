@@ -4,17 +4,19 @@ import { useNavigate, useLocation } from 'react-router-dom'
 import { useForm } from "../../hooks/useForm";
 import { componentTypes } from "../../types/types";
 import { startGetCitiesList, startGetCityCurrentWeather, startGetCityFiveDayForecast } from "../../actions/weatherActions";
-import { setFavoriteCity} from "../../actions/favoritesActions";
-import { saveCityToLocalStorage } from "../../helpers/helpers";
+import { setFavoriteCity, removeFavoriteCity, getFavoriteCities } from "../../actions/favoritesActions";
+import { removeCityFromLocalStorage } from "../../helpers/helpers";
 import queryString from 'query-string';
 import TextField from '@mui/material/TextField';
 import Autocomplete from '@mui/material/Autocomplete';
 import CircularProgress from '@mui/material/CircularProgress';
+import Alert from '@mui/material/Alert';
+import Snackbar from '@mui/material/Snackbar';
 
 export const WeatherForecastScreen = () => {
     const { citiesList, currentWeather, fiveDayForecast, cityName } = useSelector(state => state.weather);
     const { loading, component } = useSelector(state => state.ui);
-    const { favorites } = useSelector(state => state.favorites);
+    const { favorites, favoriteList, removeCity } = useSelector(state => state.favorites);
     const navigate = useNavigate();
     const location = useLocation();
     const dispatch = useDispatch();
@@ -29,33 +31,7 @@ export const WeatherForecastScreen = () => {
     const cityLabelQuery = cityQuery;
     const cityKey = citiesList?.find(city => city.label === cityInput)?.key
     const cityLabel = citiesList?.find(city => city.label === cityInput)?.label
-
-    //save favorite city to local storage
-    /*useEffect(() => {
-        if (cityKey) {
-
-            const favoriteCities = JSON.parse(localStorage.getItem('favoriteCities'));
-            if (favoriteCities.length === 0) {
-                localStorage.setItem('favoriteCities', JSON.stringify([{ key: cityKey, label: cityLabel }]));
-            } else {
-                const newFavoriteCities = [...favoriteCities, { key: cityKey, label: cityLabel }];
-                localStorage.setItem('favoriteCities', JSON.stringify(newFavoriteCities));
-            }
-        }
-    }, [favorites])*/
-
-    //function to save city to localstorage
-    /*const saveCityToLocalStorage = () => {
-        const favoriteCities = JSON.parse(localStorage.getItem('favoriteCities'));
-        if (favoriteCities.length === 0) {
-            localStorage.setItem('favoriteCities', JSON.stringify([{ key: cityKey, label: cityLabel }]));
-        } else {
-            const newFavoriteCities = [...favoriteCities, { key: cityKey, label: cityLabel }];
-            localStorage.setItem('favoriteCities', JSON.stringify(newFavoriteCities));
-        }
-    }*/
-
-    //store favorite city in redux store
+    const disableFavButton = favoriteList && favoriteList.find(city => city.label === cityLabel) ? true : false;
 
 
     useMemo(() => citySearchQuery && dispatch(startGetCityCurrentWeather(citySearchQuery, cityLabelQuery)), [citySearchQuery])
@@ -74,6 +50,10 @@ export const WeatherForecastScreen = () => {
     }, [cityInput])
 
     useEffect(() => {
+
+        if(favoriteList?.length > 4 ){
+            return alert('You can only save 5 cities')
+        }
         if (favorites && favorites.key && favorites.label) {
             const favoriteCities = JSON.parse(localStorage.getItem('favoriteCities'));
             if (!favoriteCities) {
@@ -86,6 +66,20 @@ export const WeatherForecastScreen = () => {
         dispatch(setFavoriteCity(null))
         
     }, [favorites])
+
+    useEffect(() => {
+        dispatch(getFavoriteCities())
+    }, [favorites, removeCity])
+
+    useEffect(() => {
+        if (removeCity) {
+            removeCityFromLocalStorage(removeCity)
+        }
+        dispatch(removeFavoriteCity(null))
+    },[removeCity])
+
+    
+
 
 
 
@@ -134,7 +128,12 @@ export const WeatherForecastScreen = () => {
                     !loading && currentWeather && currentWeather.WeatherText ?
                         <div>
                             <h1>{cityName}{currentWeather.WeatherText}</h1>
-                            <button onClick={() => dispatch(setFavoriteCity({ key: cityKey, label: cityLabel }))}>Add city to favorites</button>
+                            <button onClick={() => dispatch(setFavoriteCity({ key: cityKey, label: cityLabel }))} 
+                                hidden={disableFavButton}
+                            >Add city to favorites</button>
+                            <button 
+                                hidden={!disableFavButton}
+                            onClick={() => dispatch(removeFavoriteCity({cityKey}))}>remove from favs</button>
                         </div>
 
                         :
@@ -145,6 +144,13 @@ export const WeatherForecastScreen = () => {
                 }
                 {
                     fiveDayForecast && fiveDayForecast.length > 0 ? fiveDayForecast.map(day => <h1 key={day.EpochDate}>{day.Date}</h1>) : null
+                }
+                {
+                    /*<Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
+                        <Alert onClose={handleClose} severity="success" sx={{ width: '100%' }}>
+                            This is a success message!
+                        </Alert>
+                    </Snackbar>*/
                 }
             </div>
 
