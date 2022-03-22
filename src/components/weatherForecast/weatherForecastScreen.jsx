@@ -7,6 +7,7 @@ import { startGetCitiesList, startGetCityCurrentWeather, startGetCityFiveDayFore
 import { setFavoriteCity, removeFavoriteCity, getFavoriteCities } from "../../actions/favoritesActions";
 import { removeCityFromLocalStorage, disableFavButton } from "../../helpers/helpers";
 import { WeatherDisplay } from "./weatherDisplay";
+import { FideDaysDisplayComponent } from "./fideDaysDisplayComponent";
 import queryString from 'query-string';
 import TextField from '@mui/material/TextField';
 import Autocomplete from '@mui/material/Autocomplete';
@@ -16,10 +17,13 @@ import Paper from '@mui/material/Paper';
 import Button from '@mui/material/Button';
 import Alert from '@mui/material/Alert';
 import Snackbar from '@mui/material/Snackbar';
+import { Grid } from "@mui/material";
 
 export const WeatherForecastScreen = () => {
+    const [openSnackbar, setOpenSnackbar] = useState(false);
     const { citiesList, currentWeather, fiveDayForecast, cityName } = useSelector(state => state.weather);
     const { loading, component } = useSelector(state => state.ui);
+    
     const { favorites, favoriteList, removeCity } = useSelector(state => state.favorites);
     const navigate = useNavigate();
     const location = useLocation();
@@ -87,7 +91,6 @@ export const WeatherForecastScreen = () => {
             sx={{ width: '100%' }}
 
         >
-            <h1>Weather Forecast Screen</h1>
             <Box
                 display="flex"
                 flexDirection="row"
@@ -141,23 +144,25 @@ export const WeatherForecastScreen = () => {
             >
                 <Paper
                     className="animate__animated animate__fadeIn animate__delay-0.5s"
+                    sx={{ width: '80%', height: '80%', padding: '1rem' }}
                     elevation={3}>
-                    <Box
-                        display="flex"
-                        flexDirection="column"
+                    <Grid
+                        container
+                        direction="row"
+                        wrap="wrap"
+                        flexWrap="wrap"
+                        justify="space-between"
                         alignItems="center"
-                        justifyContent="center"
+                        spacing={2}
                     >
-
-
                         {
                             loading && component === componentTypes.current ? <CircularProgress color="inherit" size={50} /> : null
 
                         }
                         {
                             !loading && currentWeather && currentWeather.WeatherText ?
-                                <div >
-                                    < WeatherDisplay cityName={cityName} currentWeather={currentWeather.WeatherText} />
+                                <Grid item xs={12}>
+                                    < WeatherDisplay cityName={cityName} currentWeather={currentWeather} />
 
                                     <button
                                         hidden={!disableFavButton(favoriteList, currentWeather.Link.split("/")[5])}
@@ -171,7 +176,7 @@ export const WeatherForecastScreen = () => {
                                     >Add city to favorites
                                     </button>
 
-                                </div>
+                                </Grid>
 
                                 :
                                 null
@@ -179,23 +184,31 @@ export const WeatherForecastScreen = () => {
                         {
                             loading && component === componentTypes.fiveDayForecast ? <CircularProgress color="inherit" size={50} /> : null
                         }
-
                         {
 
-                            fiveDayForecast && fiveDayForecast.length > 0 ? fiveDayForecast.map(day => <h5 className="animate__animated animate__fadeIn animate__delay-0.5s" key={day.EpochDate}>{day.Date}</h5>) : null
+                            fiveDayForecast && fiveDayForecast.length > 0 ?
+                                <Grid item xs={12}>
+                                    <FideDaysDisplayComponent fiveDaysForecast={fiveDayForecast} />
+                                </Grid>
+
+                                :
+                                null
                         }
-                    </Box>
+                    </Grid>
                 </Paper>
             </Box>
 
 
-            {
-                /*<Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
-                    <Alert onClose={handleClose} severity="success" sx={{ width: '100%' }}>
-                        This is a success message!
+            {/*
+                error && component === componentTypes.currentWeather ?
+                    <Snackbar open={openSnackbar} autoHideDuration={6000} onClose={setOpenSnackbar(false)}>
+                        <Alert onClose={setOpenSnackbar(false)} severity="success" sx={{ width: '100%' }}>
+                        {error}
                     </Alert>
-                </Snackbar>*/
-            }
+                </Snackbar>
+                :
+                null
+                    */}
 
 
 
