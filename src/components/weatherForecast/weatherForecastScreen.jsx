@@ -5,11 +5,15 @@ import { useForm } from "../../hooks/useForm";
 import { componentTypes } from "../../types/types";
 import { startGetCitiesList, startGetCityCurrentWeather, startGetCityFiveDayForecast } from "../../actions/weatherActions";
 import { setFavoriteCity, removeFavoriteCity, getFavoriteCities } from "../../actions/favoritesActions";
-import { removeCityFromLocalStorage } from "../../helpers/helpers";
+import { removeCityFromLocalStorage, disableFavButton } from "../../helpers/helpers";
+import { WeatherDisplay } from "./weatherDisplay";
 import queryString from 'query-string';
 import TextField from '@mui/material/TextField';
 import Autocomplete from '@mui/material/Autocomplete';
 import CircularProgress from '@mui/material/CircularProgress';
+import Box from '@mui/material/Box';
+import Paper from '@mui/material/Paper';
+import Button from '@mui/material/Button';
 import Alert from '@mui/material/Alert';
 import Snackbar from '@mui/material/Snackbar';
 
@@ -31,8 +35,6 @@ export const WeatherForecastScreen = () => {
     const cityLabelQuery = cityQuery;
     const cityKey = citiesList?.find(city => city.label === cityInput)?.key
     const cityLabel = citiesList?.find(city => city.label === cityInput)?.label
-    const disableFavButton = favoriteList && favoriteList.find(city => city.label === cityLabel) ? true : false;
-
 
     useMemo(() => citySearchQuery && dispatch(startGetCityCurrentWeather(citySearchQuery, cityLabelQuery)), [citySearchQuery])
     useMemo(() => citySearchQuery && dispatch(startGetCityFiveDayForecast(citySearchQuery)), [citySearchQuery])
@@ -51,10 +53,7 @@ export const WeatherForecastScreen = () => {
 
     useEffect(() => {
 
-        if(favoriteList?.length > 4 ){
-            return alert('You can only save 5 cities')
-        }
-        if (favorites && favorites.key && favorites.label) {
+        if (favorites?.key.length > 0 && favorites?.label.length > 0) {
             const favoriteCities = JSON.parse(localStorage.getItem('favoriteCities'));
             if (!favoriteCities) {
                 localStorage.setItem('favoriteCities', JSON.stringify([{ key: favorites.key, label: favorites.label }]));
@@ -64,7 +63,7 @@ export const WeatherForecastScreen = () => {
             }
         }
         dispatch(setFavoriteCity(null))
-        
+
     }, [favorites])
 
     useEffect(() => {
@@ -76,84 +75,130 @@ export const WeatherForecastScreen = () => {
             removeCityFromLocalStorage(removeCity)
         }
         dispatch(removeFavoriteCity(null))
-    },[removeCity])
-
-    
-
-
-
+    }, [removeCity])
 
 
     return (
-        <div>
+        <Box
+            display="flex"
+            flexDirection="column"
+            alignItems="center"
+            justifyContent="center"
+            sx={{ width: '100%' }}
+
+        >
             <h1>Weather Forecast Screen</h1>
-            <Autocomplete
-                fullWidth
-                onInputChange={(event, newInputValue) => handleInputChange(event, newInputValue)}
-                id="cityInput"
-                sx={{ width: 300 }}
-                open={open}
-                onOpen={() => {
-                    setOpen(true);
-                }}
-                onClose={() => {
-                    setOpen(false);
-                }}
-                isOptionEqualToValue={(option, value) => option.label === value.label}
-                getOptionLabel={(option) => option.label}
-                options={citiesList ? citiesList : []}
-                loading={loading}
-                renderInput={(params) => (
-                    <TextField
-                        {...params}
-                        InputProps={{
-                            ...params.InputProps,
-                            endAdornment: (
-                                <>
-                                    {loading && component === componentTypes.autocomplete ? <CircularProgress color="inherit" size={20} /> : null}
-                                    {params.InputProps.endAdornment}
-                                </>
-                            ),
-                        }}
-                    />
-                )}
-            />
-            <button onClick={() => navigate(`?q=${cityKey}&cityQuery=${cityLabel}`)}>Search</button>
-            <div>
-                {
-                    loading && component === componentTypes.current ? <CircularProgress color="inherit" size={50} /> : null
+            <Box
+                display="flex"
+                flexDirection="row"
+                alignItems="center"
+                justifyContent="space-between"
+                sx={{ width: '30%' }}
+            >
 
-                }
-                {
-                    !loading && currentWeather && currentWeather.WeatherText ?
-                        <div>
-                            <h1>{cityName}{currentWeather.WeatherText}</h1>
-                            <button onClick={() => dispatch(setFavoriteCity({ key: cityKey, label: cityLabel }))} 
-                                hidden={disableFavButton}
-                            >Add city to favorites</button>
-                            <button 
-                                hidden={!disableFavButton}
-                            onClick={() => dispatch(removeFavoriteCity({cityKey}))}>remove from favs</button>
-                        </div>
+                <Autocomplete
+                    fullWidth
+                    onInputChange={(event, newInputValue) => handleInputChange(event, newInputValue)}
+                    id="cityInput"
+                    sx={{ width: 300 }}
+                    open={open}
+                    onOpen={() => {
+                        setOpen(true);
+                    }}
+                    onClose={() => {
+                        setOpen(false);
+                    }}
+                    isOptionEqualToValue={(option, value) => option.label === value.label}
+                    getOptionLabel={(option) => option.label}
+                    options={citiesList ? citiesList : []}
+                    loading={loading}
+                    renderInput={(params) => (
+                        <TextField
+                            {...params}
+                            InputProps={{
+                                ...params.InputProps,
+                                endAdornment: (
+                                    <>
+                                        {loading && component === componentTypes.autocomplete ? <CircularProgress color="inherit" size={20} /> : null}
+                                        {params.InputProps.endAdornment}
+                                    </>
+                                ),
+                            }}
+                        />
+                    )}
+                />
 
-                        :
-                        null
-                }
-                {
-                    loading && component === componentTypes.fiveDayForecast ? <CircularProgress color="inherit" size={50} /> : null
-                }
-                {
-                    fiveDayForecast && fiveDayForecast.length > 0 ? fiveDayForecast.map(day => <h1 key={day.EpochDate}>{day.Date}</h1>) : null
-                }
-                {
-                    /*<Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
-                        <Alert onClose={handleClose} severity="success" sx={{ width: '100%' }}>
-                            This is a success message!
-                        </Alert>
-                    </Snackbar>*/
-                }
-            </div>
+                <Button variant="contained" size="large" onClick={() => navigate(`?q=${cityKey}&cityQuery=${cityLabel}`)}>Search</Button>
+            </Box>
 
-        </div>
+            <Box
+                display="flex"
+                flexDirection="column"
+                alignItems="center"
+                justifyContent="center"
+                sx={{ width: '100%' }}
+
+            >
+                <Paper
+                    className="animate__animated animate__fadeIn animate__delay-0.5s"
+                    elevation={3}>
+                    <Box
+                        display="flex"
+                        flexDirection="column"
+                        alignItems="center"
+                        justifyContent="center"
+                    >
+
+
+                        {
+                            loading && component === componentTypes.current ? <CircularProgress color="inherit" size={50} /> : null
+
+                        }
+                        {
+                            !loading && currentWeather && currentWeather.WeatherText ?
+                                <div >
+                                    < WeatherDisplay cityName={cityName} currentWeather={currentWeather.WeatherText} />
+
+                                    <button
+                                        hidden={!disableFavButton(favoriteList, currentWeather.Link.split("/")[5])}
+                                        onClick={() => dispatch(removeFavoriteCity(currentWeather.Link.split("/")[6]))}>
+                                        remove from favs
+                                    </button>
+
+
+                                    <button onClick={() => dispatch(setFavoriteCity({ key: currentWeather.Link.split("/")[6], label: currentWeather.Link.split("/")[5] }))}
+                                        hidden={disableFavButton(favoriteList, currentWeather.Link.split("/")[5])}
+                                    >Add city to favorites
+                                    </button>
+
+                                </div>
+
+                                :
+                                null
+                        }
+                        {
+                            loading && component === componentTypes.fiveDayForecast ? <CircularProgress color="inherit" size={50} /> : null
+                        }
+
+                        {
+
+                            fiveDayForecast && fiveDayForecast.length > 0 ? fiveDayForecast.map(day => <h5 className="animate__animated animate__fadeIn animate__delay-0.5s" key={day.EpochDate}>{day.Date}</h5>) : null
+                        }
+                    </Box>
+                </Paper>
+            </Box>
+
+
+            {
+                /*<Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
+                    <Alert onClose={handleClose} severity="success" sx={{ width: '100%' }}>
+                        This is a success message!
+                    </Alert>
+                </Snackbar>*/
+            }
+
+
+
+        </Box >
     )
 }
