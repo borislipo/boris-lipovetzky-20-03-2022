@@ -65,16 +65,16 @@ export const WeatherForecastScreen = () => {
         console.warn(`ERROR(${err.code}): ${err.message}`);
     }
 
-     //navigator.geolocation.getCurrentPosition(geoSuccess, geoErr, geoOptions);
-        
+    
     useEffect(() => {
         cityKeyRef.current = currentWeather?.Link?.split("/")[6];
         cityLabelRef.current = currentWeather?.Link?.split("/")[5].replace(/-/g, ' ');
     }, [currentWeather])
-        
-
+    
+    
     useEffect(() => {
         
+        navigator.geolocation.getCurrentPosition(geoSuccess, geoErr, geoOptions);
         if (isMounted.current && !currentWeather && !fiveDayForecast) {
             dispatch(startGetCityCurrentWeather(telAvivKey, telAvivLabel))
             dispatch(startGetCityFiveDayForecast(telAvivKey))

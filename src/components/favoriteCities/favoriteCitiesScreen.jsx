@@ -13,6 +13,8 @@ export const FavoriteCitiesScreen = () => {
     const { favoriteList, favorites, favoritesWeather, removeCity } = useSelector(state => state.favorites);
 
 
+
+
     useEffect(() => {
 
         dispatch(getFavoriteCities())
@@ -47,8 +49,10 @@ export const FavoriteCitiesScreen = () => {
                 alignItems="center"
                 spacing={2}
             >
+                
+                
                 {
-                    favoritesWeather && favoritesWeather.map(city => {
+                    favoriteList && favoriteList.length > 0 && favoritesWeather && favoritesWeather.map(city => {
                         return (
 
                             <FavoriteItemWeather

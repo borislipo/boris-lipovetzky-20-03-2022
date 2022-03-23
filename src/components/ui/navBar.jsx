@@ -24,13 +24,16 @@ export const NavBar = () => {
                             <Grid
                                 item
                                 xs={6}>
-                                    <img  src={process.env.PUBLIC_URL + `assets/weatherfy.png`} alt="logo icon" />
+                                <img src={process.env.PUBLIC_URL + `assets/weatherfy.png`} alt="logo icon" />
                             </Grid>
 
                             <Grid
-                                itemxs={6}
+                                item
+                                xs={6}
                             >
                                 <Box
+                                    sx={{ padding: '1rem', }}
+                                    container
                                     display="flex"
                                     flexDirection="row"
                                     justifyContent="flex-end"
