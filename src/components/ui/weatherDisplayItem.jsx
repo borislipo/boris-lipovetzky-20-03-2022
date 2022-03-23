@@ -16,6 +16,7 @@ export const WeatherDisplayItem = ({ date, min, max, icon, isFahrenheit }) => {
 
     return (
         <Grid
+            className="animate__animated animate__fadeIn animate__delay-0.5s"
             item
             xs={12}
             s={12}
@@ -29,17 +30,28 @@ export const WeatherDisplayItem = ({ date, min, max, icon, isFahrenheit }) => {
                 margin: "0 auto"
             }}>
             <img
+                className="animate__animated animate__fadeIn animate__delay-0.5s"
                 style={{ width: "100%", height: "auto" }}
                 src={process.env.PUBLIC_URL + `assets/${icon}.svg`}
                 alt="green iguana"
             />
-            <Typography textAlign="center" variant="h6" component="div">
+            <Typography
+                className="animate__animated animate__fadeIn animate__delay-0.5s"
+                textAlign="center"
+                variant="h6"
+                component="div">
                 {transformDate(date)}
             </Typography>
-            <Typography textAlign="center" color="text.secondary">
+            <Typography
+                className="animate__animated animate__fadeIn animate__delay-0.5s"
+                textAlign="center"
+                color="text.secondary">
                 {min}{isFahrenheit ? "°F" : "°C"}
             </Typography>
-            <Typography textAlign="center" color="text.secondary">
+            <Typography
+                className="animate__animated animate__fadeIn animate__delay-0.5s"
+                textAlign="center"
+                color="text.secondary">
                 {max}{isFahrenheit ? "°F" : "°C"}
             </Typography>
 

@@ -8,6 +8,7 @@ import Button from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
 
 export const NavBar = () => {
+    const navigate = useNavigate();
 
 
     return (
@@ -23,11 +24,7 @@ export const NavBar = () => {
                             <Grid
                                 item
                                 xs={6}>
-                                <NavLink
-                                    style={{ textDecoration: 'none' }}
-                                    to="/" >
-                                    <img src={process.env.PUBLIC_URL + `assets/weatherfy.png`} alt="logo icon" />
-                                </NavLink>
+                                    <img  src={process.env.PUBLIC_URL + `assets/weatherfy.png`} alt="logo icon" />
                             </Grid>
 
                             <Grid

@@ -4,19 +4,16 @@ import { useDispatch, useSelector } from "react-redux";
 import { getFavoriteCities, startGetFavoritesWeather } from "../../actions/favoritesActions";
 import { FavoriteItemWeather } from "../ui/favoriteItemWeather";
 import { capitalizeFirstLetter } from "../../helpers/helpers";
-import { WeatherDisplayItem } from "../ui/weatherDisplayItem";
 import { Grid } from "@mui/material";
 import { Box } from "@mui/system";
-import { Paper } from "@mui/material";
+
 
 export const FavoriteCitiesScreen = () => {
-    const navigate = useNavigate();
     const dispatch = useDispatch();
     const { favoriteList, favorites, favoritesWeather, removeCity } = useSelector(state => state.favorites);
 
 
     useEffect(() => {
-
 
         dispatch(getFavoriteCities())
 
@@ -56,7 +53,7 @@ export const FavoriteCitiesScreen = () => {
 
                             <FavoriteItemWeather
                                 key={city[0].Link}
-                                cityName={capitalizeFirstLetter(city[0].Link.split('/')[5].replace(/-/g, ' '))}
+                                cityName={capitalizeFirstLetter(city[0].Link?.split('/')[5].replace(/-/g, ' '))}
                                 currentWeather={city[0].Temperature.Metric.Value}
                                 icon={city[0].WeatherIcon}
                                 isFahrenheit={false}

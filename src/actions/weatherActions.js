@@ -8,6 +8,9 @@ export const startGetCitiesList = (query) => {
         try {
             dispatch(startLoading(componentTypes.autocomplete));
             const response = await fetch(`${url}/locations/v1/cities/autocomplete?apikey=${apiKey}&q=${query}`);
+            if (response.status === 400) {
+                return alert('Something went wrong');
+            }
             const data = await response.json();
             const autoCompleteCities = data.map(city => {
                 return {
@@ -18,7 +21,8 @@ export const startGetCitiesList = (query) => {
             dispatch(getCitiesList(autoCompleteCities.slice(0,5)));
             dispatch(finishLoading(componentTypes.autocomplete));
         } catch (error) {
-            return dispatch(setError(error.message, componentTypes.autocomplete));
+            console.log(error)
+           
         }
     }
 }
@@ -34,13 +38,15 @@ export const startGetCityCurrentWeather = (Key, label) => {
 
     return async (dispatch) => {
         try {
-            dispatch(startLoading(componentTypes.currentWeather));
             const response = await fetch(`${url}/currentconditions/v1/${Key}?apikey=${apiKey}`);
+            if(response.status === 400){
+                return alert('City not found');
+            }
             const data = await response.json();
             dispatch(getCityCurrentWeather({weatherData : data[0], cityName: label}));
-            dispatch(finishLoading(componentTypes.currentWeather));
         } catch (error) {
-          return  dispatch(setError(error.message, componentTypes.currentWeather));
+            console.log(error);
+          
         }
     }
 }
@@ -57,11 +63,15 @@ export const startGetCityFiveDayForecast = (Key) => {
         try {
             dispatch(startLoading(componentTypes.fiveDayForecast));
             const response = await fetch(`${url}/forecasts/v1/daily/5day/${Key}?apikey=${apiKey}&language=en-us&details=false&metric=true`);
+            if (response.status === 400) {
+                return alert('City not found');
+            }
             const data = await response.json();
             dispatch(getCityFiveDayForecast(data.DailyForecasts));
             dispatch(finishLoading(componentTypes.fiveDayForecast));
         } catch (error) {
-           return  dispatch(setError(error.message, componentTypes.fiveDayForecast));
+            console.log(error)
+           
         }
     }
 }

@@ -2,10 +2,8 @@ import { types } from "../types/types"
 
 export const setError = (msg, component) => ({
     type: types.uiSetError,
-    payload: {
-        msg,
-        component
-    }
+    payload: msg
+        
 })
 
 export const removeError = (component) => ({

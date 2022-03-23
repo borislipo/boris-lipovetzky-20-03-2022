@@ -1,4 +1,6 @@
-import { useDispatch, useSelector} from 'react-redux';
+import { useDispatch } from 'react-redux';
+import FavoriteIcon from '@mui/icons-material/Favorite';
+import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import { removeFavoriteCity, setFavoriteCity } from '../../actions/favoritesActions';
 import CardMedia from '@mui/material/CardMedia';
 import Button from '@mui/material/Button';
@@ -7,13 +9,14 @@ import { Box } from '@mui/system';
 import { Grid } from '@mui/material';
 import { disableFavButton } from '../../helpers/helpers';
 
-export const WeatherDisplay = ({ cityName, currentWeather, favoriteList }) => {
+export const WeatherDisplay = ({ cityName, currentWeather, favoriteList, cityRef, cityLableRef }) => {
 
 
     const dispatch = useDispatch();
 
     return (
         <Grid
+            className="animate__animated animate__fadeIn animate__delay-0.5s"
             container
             direction="row"
         >
@@ -29,6 +32,7 @@ export const WeatherDisplay = ({ cityName, currentWeather, favoriteList }) => {
                 >
                     <Box >
                         <CardMedia
+                            className="animate__animated animate__fadeIn animate__delay-0.5s"
                             component="img"
                             height="140"
                             image={process.env.PUBLIC_URL + `assets/${currentWeather.WeatherIcon}.svg`}
@@ -36,6 +40,7 @@ export const WeatherDisplay = ({ cityName, currentWeather, favoriteList }) => {
                         />
                     </Box>
                     <Box
+                        className="animate__animated animate__fadeIn animate__delay-0.5s"
                         display="flex"
                         flexDirection="column"
                     >
@@ -65,7 +70,9 @@ export const WeatherDisplay = ({ cityName, currentWeather, favoriteList }) => {
 
                             <Button
                                 variant="contained"
+                                color="error"
                                 onClick={() => dispatch(removeFavoriteCity(currentWeather.Link.split("/")[6].replace(/-/g, ' ')))}
+                                endIcon={<FavoriteIcon />}
                             >
                                 Remove Fav
                             </Button>
@@ -73,7 +80,9 @@ export const WeatherDisplay = ({ cityName, currentWeather, favoriteList }) => {
                             
                             <Button
                                 variant="contained"
-                                onClick={() => dispatch(setFavoriteCity({ key: currentWeather.Link.split("/")[6] ||"215854", label: currentWeather.Link.split("/")[5].replace(/-/g, ' ') || cityName}))}
+                                color='error'
+                                endIcon={<FavoriteBorderIcon />}
+                                onClick={() => dispatch(setFavoriteCity({ key: currentWeather.Link.split("/")[6] , label: currentWeather.Link.split("/")[5].replace(/-/g, ' ') }))}
                             >
                                 Add to Favs
                             </Button>

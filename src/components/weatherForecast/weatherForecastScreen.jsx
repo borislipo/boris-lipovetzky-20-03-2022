@@ -1,11 +1,12 @@
 import { useEffect, useState, useMemo, useRef } from "react";
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, useLocation } from 'react-router-dom'
+import { url,apiKey } from "../../api/config";
 import { useForm } from "../../hooks/useForm";
 import { componentTypes } from "../../types/types";
 import { startGetCitiesList, startGetCityCurrentWeather, startGetCityFiveDayForecast } from "../../actions/weatherActions";
 import { setFavoriteCity, removeFavoriteCity, getFavoriteCities } from "../../actions/favoritesActions";
-import { removeCityFromLocalStorage, capitalizeFirstLetter } from "../../helpers/helpers";
+import { removeCityFromLocalStorage, capitalizeFirstLetter, geoOptions, geoSuccess, geoErr } from "../../helpers/helpers";
 import { WeatherDisplay } from "./weatherDisplay";
 import { FideDaysDisplayComponent } from "./fideDaysDisplayComponent";
 import { telAvivKey, telAvivLabel } from "../../api/config";
@@ -16,16 +17,14 @@ import CircularProgress from '@mui/material/CircularProgress';
 import Box from '@mui/material/Box';
 import Paper from '@mui/material/Paper';
 import Button from '@mui/material/Button';
-import Alert from '@mui/material/Alert';
-import Snackbar from '@mui/material/Snackbar';
 import { Grid } from "@mui/material";
 
 export const WeatherForecastScreen = () => {
-    const [openSnackbar, setOpenSnackbar] = useState(false);
     const { citiesList, currentWeather, fiveDayForecast, cityName } = useSelector(state => state.weather);
     const { loading, component, error } = useSelector(state => state.ui);
-    console.log(error);
     const isMounted = useRef(true);
+    const cityKeyRef = useRef(currentWeather?.Link?.split("/")[6]);
+    const cityLabelRef = useRef(currentWeather?.Link?.split("/")[5].replace(/-/g, ' '));
 
     const { favorites, favoriteList, removeCity } = useSelector(state => state.favorites);
     const navigate = useNavigate();
@@ -46,7 +45,36 @@ export const WeatherForecastScreen = () => {
     useMemo(() => citySearchQuery && dispatch(startGetCityCurrentWeather(citySearchQuery, cityLabelQuery)), [citySearchQuery])
     useMemo(() => citySearchQuery && dispatch(startGetCityFiveDayForecast(citySearchQuery)), [citySearchQuery])
 
+    const  geoOptions = {
+        enableHighAccuracy: true,
+        timeout: 5000,
+        maximumAge: 0
+    };
+
+    const geoSuccess =  async(pos) => {
+        var crd = pos.coords;
+        const reponse = await fetch(`${url}/locations/v1/cities/geoposition/search?apikey=${apiKey}&q=${crd.latitude},${crd.longitude}`)
+        const data = await reponse.json();
+        const city = data.LocalizedName;
+        const cityKey = data.Key;
+        dispatch(startGetCityCurrentWeather(cityKey, city));
+        dispatch(startGetCityFiveDayForecast(cityKey));
+    }
+
+    const geoErr = (err) => {
+        console.warn(`ERROR(${err.code}): ${err.message}`);
+    }
+
+     //navigator.geolocation.getCurrentPosition(geoSuccess, geoErr, geoOptions);
+        
     useEffect(() => {
+        cityKeyRef.current = currentWeather?.Link?.split("/")[6];
+        cityLabelRef.current = currentWeather?.Link?.split("/")[5].replace(/-/g, ' ');
+    }, [currentWeather])
+        
+
+    useEffect(() => {
+        
         if (isMounted.current && !currentWeather && !fiveDayForecast) {
             dispatch(startGetCityCurrentWeather(telAvivKey, telAvivLabel))
             dispatch(startGetCityFiveDayForecast(telAvivKey))
@@ -73,9 +101,9 @@ export const WeatherForecastScreen = () => {
         if (favorites?.key.length > 0 && favorites?.label.length > 0) {
             const favoriteCities = JSON.parse(localStorage.getItem('favoriteCities'));
             if (!favoriteCities) {
-                localStorage.setItem('favoriteCities', JSON.stringify([{ key: favorites.key || currentWeather.Link.split("/")[6], label: favorites.label || currentWeather.Link.split("/")[5].replace(/-/g, ' ') }]));
+                localStorage.setItem('favoriteCities', JSON.stringify([{ key: cityKeyRef.current, label: cityLabelRef.current }]));
             } else {
-                const newFavoriteCities = [...favoriteCities, { key: cityKey, label: cityLabel }];
+                const newFavoriteCities = [...favoriteCities, { key: cityKeyRef.current, label: cityLabelRef.current }];
                 localStorage.setItem('favoriteCities', JSON.stringify(newFavoriteCities));
             }
         }
@@ -97,19 +125,19 @@ export const WeatherForecastScreen = () => {
 
     return (
         <Box
+            className="animate__animated animate__fadeIn animate__delay-0.5s"
             display="flex"
             flexDirection="column"
             alignItems="center"
             justifyContent="center"
-            sx={{ width: '100%' }}
-
+            sx={{ width: '100%', marginTop: '1rem' }}
         >
             <Box
                 display="flex"
                 flexDirection="row"
                 alignItems="center"
                 justifyContent="space-between"
-                sx={{ width: '30%' }}
+                sx={{ width: '30%', marginBottom: '1rem' }}
             >
 
                 <Autocomplete
@@ -194,20 +222,6 @@ export const WeatherForecastScreen = () => {
                     </Grid>
                 </Paper>
             </Box>
-
-
-            {
-                error && error.length > 0 ?
-
-                    <Alert sx={{ width: '50%' }}>
-                        {error}
-                    </Alert>
-                    : null
-
-            }
-
-
-
         </Box >
     )
 }
