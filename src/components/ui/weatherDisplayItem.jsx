@@ -33,7 +33,7 @@ export const WeatherDisplayItem = ({ date, min, max, icon, isFahrenheit }) => {
                 className="animate__animated animate__fadeIn animate__delay-0.5s"
                 style={{ width: "100%", height: "auto" }}
                 src={process.env.PUBLIC_URL + `assets/${icon}.svg`}
-                alt="green iguana"
+                alt="weather icon"
             />
             <Typography
                 className="animate__animated animate__fadeIn animate__delay-0.5s"

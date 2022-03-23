@@ -31,7 +31,7 @@ export const startGetFavoritesWeather = (list) => {
             const weatherPromises = list.map(async (city) => {
                 const response = await fetch(`${url}/currentconditions/v1/${city.key}?apikey=${apiKey}`);
                 if (response.status === 400) {
-                    return alert('City not found');
+                    return dispatch(setError(response.statusText));
                 }
                 const data = await response.json()
                 return data;

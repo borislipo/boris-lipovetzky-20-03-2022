@@ -12,9 +12,6 @@ export const FavoriteCitiesScreen = () => {
     const dispatch = useDispatch();
     const { favoriteList, favorites, favoritesWeather, removeCity } = useSelector(state => state.favorites);
 
-
-
-
     useEffect(() => {
 
         dispatch(getFavoriteCities())
@@ -54,7 +51,6 @@ export const FavoriteCitiesScreen = () => {
                 {
                     favoriteList && favoriteList.length > 0 && favoritesWeather && favoritesWeather.map(city => {
                         return (
-
                             <FavoriteItemWeather
                                 key={city[0].Link}
                                 cityName={capitalizeFirstLetter(city[0].Link?.split('/')[5].replace(/-/g, ' '))}

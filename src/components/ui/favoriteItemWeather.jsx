@@ -22,7 +22,7 @@ export const FavoriteItemWeather = ({ cityName, currentWeather, icon, isFahrenhe
             <img
                 style={{width: "100%", height: "auto"}}
                 src={process.env.PUBLIC_URL + `assets/${icon}.svg`}
-                alt="green iguana"
+                alt="weather icon"
             />
             <Typography textAlign="center" variant="h6" component="div">
                 {cityName}

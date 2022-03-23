@@ -1,6 +1,6 @@
 import { types, componentTypes } from "../types/types";
 import { apiKey, url } from "../api/config";
-import { setError, removeError, startLoading, finishLoading } from "./uiActions";
+import { setError, startLoading, finishLoading } from "./uiActions";
 
 
 export const startGetCitiesList = (query) => {
@@ -9,7 +9,7 @@ export const startGetCitiesList = (query) => {
             dispatch(startLoading(componentTypes.autocomplete));
             const response = await fetch(`${url}/locations/v1/cities/autocomplete?apikey=${apiKey}&q=${query}`);
             if (response.status === 400) {
-                return alert('Something went wrong');
+                return dispatch(setError(response.statusText));
             }
             const data = await response.json();
             const autoCompleteCities = data.map(city => {
@@ -40,7 +40,7 @@ export const startGetCityCurrentWeather = (Key, label) => {
         try {
             const response = await fetch(`${url}/currentconditions/v1/${Key}?apikey=${apiKey}`);
             if(response.status === 400){
-                return alert('City not found');
+                return dispatch(setError(response.statusText));
             }
             const data = await response.json();
             dispatch(getCityCurrentWeather({weatherData : data[0], cityName: label}));
@@ -64,7 +64,7 @@ export const startGetCityFiveDayForecast = (Key) => {
             dispatch(startLoading(componentTypes.fiveDayForecast));
             const response = await fetch(`${url}/forecasts/v1/daily/5day/${Key}?apikey=${apiKey}&language=en-us&details=false&metric=true`);
             if (response.status === 400) {
-                return alert('City not found');
+                return dispatch(setError(response.statusText));
             }
             const data = await response.json();
             dispatch(getCityFiveDayForecast(data.DailyForecasts));

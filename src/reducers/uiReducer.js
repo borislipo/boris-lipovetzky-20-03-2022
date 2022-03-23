@@ -13,7 +13,6 @@ export const uiReducer = (state = {}, action) => {
             return {
                 ...state,
                 error: null,
-                component: payload.component
             };
         case types.uiStartLoading:
             return {

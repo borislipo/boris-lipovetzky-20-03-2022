@@ -10,6 +10,7 @@ import { removeCityFromLocalStorage, capitalizeFirstLetter, geoOptions, geoSucce
 import { WeatherDisplay } from "./weatherDisplay";
 import { FideDaysDisplayComponent } from "./fideDaysDisplayComponent";
 import { telAvivKey, telAvivLabel } from "../../api/config";
+import { AlertDialogComponent } from "../ui/alertDialogComponent";
 import queryString from 'query-string';
 import TextField from '@mui/material/TextField';
 import Autocomplete from '@mui/material/Autocomplete';
@@ -69,13 +70,12 @@ export const WeatherForecastScreen = () => {
     useEffect(() => {
         cityKeyRef.current = currentWeather?.Link?.split("/")[6];
         cityLabelRef.current = currentWeather?.Link?.split("/")[5].replace(/-/g, ' ');
-    }, [currentWeather])
-    
+    }, [currentWeather, citySearchQuery])
     
     useEffect(() => {
         
-        navigator.geolocation.getCurrentPosition(geoSuccess, geoErr, geoOptions);
         if (isMounted.current && !currentWeather && !fiveDayForecast) {
+            navigator.geolocation.getCurrentPosition(geoSuccess, geoErr, geoOptions);
             dispatch(startGetCityCurrentWeather(telAvivKey, telAvivLabel))
             dispatch(startGetCityFiveDayForecast(telAvivKey))
         }
@@ -219,9 +219,13 @@ export const WeatherForecastScreen = () => {
                                 :
                                 null
                         }
+                        {
+                            error ? <AlertDialogComponent error={error} /> : null
+                        }
                     </Grid>
                 </Paper>
             </Box>
+        
         </Box >
     )
 }

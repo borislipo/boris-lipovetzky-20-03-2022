@@ -36,7 +36,7 @@ export const WeatherDisplay = ({ cityName, currentWeather, favoriteList, cityRef
                             component="img"
                             height="140"
                             image={process.env.PUBLIC_URL + `assets/${currentWeather.WeatherIcon}.svg`}
-                            alt="green iguana"
+                            alt="weather icon"
                         />
                     </Box>
                     <Box
