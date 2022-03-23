@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { getFavoriteCities, startGetFavoritesWeather } from "../../actions/favoritesActions";
 import { FavoriteItemWeather } from "../ui/favoriteItemWeather";
+import { capitalizeFirstLetter } from "../../helpers/helpers";
 import { WeatherDisplayItem } from "../ui/weatherDisplayItem";
 import { Grid } from "@mui/material";
 import { Box } from "@mui/system";
@@ -12,7 +13,6 @@ export const FavoriteCitiesScreen = () => {
     const navigate = useNavigate();
     const dispatch = useDispatch();
     const { favoriteList, favorites, favoritesWeather, removeCity } = useSelector(state => state.favorites);
-    console.log(favoritesWeather);
 
 
     useEffect(() => {
@@ -53,16 +53,16 @@ export const FavoriteCitiesScreen = () => {
                 {
                     favoritesWeather && favoritesWeather.map(city => {
                         return (
-                            
-                                <FavoriteItemWeather
-                                    key={city[0].Link}
-                                    cityName={city[0].Link.split('/')[5]}
-                                    currentWeather={city[0].Temperature.Metric.Value}
-                                    icon={city[0].WeatherIcon}
-                                    isFahrenheit={false}
-                                    navigateLink={`/forecast?q=${city[0].Link.split('/')[6]}&cityQuery=${city[0].Link.split('/')[5]}`}
-                                />
-                            
+
+                            <FavoriteItemWeather
+                                key={city[0].Link}
+                                cityName={capitalizeFirstLetter(city[0].Link.split('/')[5].replace(/-/g, ' '))}
+                                currentWeather={city[0].Temperature.Metric.Value}
+                                icon={city[0].WeatherIcon}
+                                isFahrenheit={false}
+                                navigateLink={`/forecast?q=${city[0].Link.split('/')[6]}&cityQuery=${capitalizeFirstLetter(city[0].Link.split('/')[5].replace(/-/g, ' ')) }`}
+                            />
+
                         )
                     })
 

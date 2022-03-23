@@ -10,5 +10,9 @@ export const removeCityFromLocalStorage = (cityKey ) => {
 }
 
 export const disableFavButton = (favoriteList, cityName) => {
-    return favoriteList && favoriteList.find(city => city.label.toLowerCase() === cityName) ? true : false;
+    return favoriteList && favoriteList.find(city => city.label?.toLowerCase() === cityName) ? true : false;
+}
+
+export const capitalizeFirstLetter = (string) => {
+    return string?.charAt(0).toUpperCase() + string?.slice(1);
 }

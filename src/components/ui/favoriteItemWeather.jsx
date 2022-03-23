@@ -3,7 +3,6 @@ import { Box, Button, Grid } from "@mui/material"
 import { CardMedia, Typography } from "@mui/material"
 
 export const FavoriteItemWeather = ({ cityName, currentWeather, icon, isFahrenheit, navigateLink }) => {
-    console.log(cityName)
 
     const navigate = useNavigate();
     return (
@@ -20,10 +19,9 @@ export const FavoriteItemWeather = ({ cityName, currentWeather, icon, isFahrenhe
                 maxWidth: "100",
                 margin: "0 auto"
             }}>
-            <CardMedia
-                component="img"
-                height="140"
-                image={process.env.PUBLIC_URL + `assets/${icon}.svg`}
+            <img
+                style={{width: "100%", height: "auto"}}
+                src={process.env.PUBLIC_URL + `assets/${icon}.svg`}
                 alt="green iguana"
             />
             <Typography textAlign="center" variant="h6" component="div">

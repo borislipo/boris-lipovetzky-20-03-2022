@@ -28,10 +28,9 @@ export const WeatherDisplayItem = ({ date, min, max, icon, isFahrenheit }) => {
                 maxWidth: "100",
                 margin: "0 auto"
             }}>
-            <CardMedia
-                component="img"
-                height="140"
-                image={process.env.PUBLIC_URL + `assets/${icon}.svg`}
+            <img
+                style={{ width: "100%", height: "auto" }}
+                src={process.env.PUBLIC_URL + `assets/${icon}.svg`}
                 alt="green iguana"
             />
             <Typography textAlign="center" variant="h6" component="div">

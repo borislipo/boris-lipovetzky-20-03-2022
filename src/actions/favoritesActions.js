@@ -38,7 +38,7 @@ export const startGetFavoritesWeather = (list) => {
                 dispatch(finishLoading(componentTypes.favorites));
             }
         catch (error) {
-            dispatch(setError(error.message, componentTypes.favoritesWeather));
+           return dispatch(setError(error.message, componentTypes.favoritesWeather));
         }
 
         

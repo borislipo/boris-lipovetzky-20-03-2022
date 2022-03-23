@@ -18,7 +18,7 @@ export const startGetCitiesList = (query) => {
             dispatch(getCitiesList(autoCompleteCities.slice(0,5)));
             dispatch(finishLoading(componentTypes.autocomplete));
         } catch (error) {
-            dispatch(setError(error.message, componentTypes.autocomplete));
+            return dispatch(setError(error.message, componentTypes.autocomplete));
         }
     }
 }
@@ -40,7 +40,7 @@ export const startGetCityCurrentWeather = (Key, label) => {
             dispatch(getCityCurrentWeather({weatherData : data[0], cityName: label}));
             dispatch(finishLoading(componentTypes.currentWeather));
         } catch (error) {
-            dispatch(setError(error.message, componentTypes.currentWeather));
+          return  dispatch(setError(error.message, componentTypes.currentWeather));
         }
     }
 }
@@ -61,7 +61,7 @@ export const startGetCityFiveDayForecast = (Key) => {
             dispatch(getCityFiveDayForecast(data.DailyForecasts));
             dispatch(finishLoading(componentTypes.fiveDayForecast));
         } catch (error) {
-            dispatch(setError(error.message, componentTypes.fiveDayForecast));
+           return  dispatch(setError(error.message, componentTypes.fiveDayForecast));
         }
     }
 }

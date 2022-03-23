@@ -1,13 +1,14 @@
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState, useMemo, useRef } from "react";
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, useLocation } from 'react-router-dom'
 import { useForm } from "../../hooks/useForm";
 import { componentTypes } from "../../types/types";
 import { startGetCitiesList, startGetCityCurrentWeather, startGetCityFiveDayForecast } from "../../actions/weatherActions";
 import { setFavoriteCity, removeFavoriteCity, getFavoriteCities } from "../../actions/favoritesActions";
-import { removeCityFromLocalStorage, disableFavButton } from "../../helpers/helpers";
+import { removeCityFromLocalStorage, capitalizeFirstLetter } from "../../helpers/helpers";
 import { WeatherDisplay } from "./weatherDisplay";
 import { FideDaysDisplayComponent } from "./fideDaysDisplayComponent";
+import { telAvivKey, telAvivLabel } from "../../api/config";
 import queryString from 'query-string';
 import TextField from '@mui/material/TextField';
 import Autocomplete from '@mui/material/Autocomplete';
@@ -22,8 +23,10 @@ import { Grid } from "@mui/material";
 export const WeatherForecastScreen = () => {
     const [openSnackbar, setOpenSnackbar] = useState(false);
     const { citiesList, currentWeather, fiveDayForecast, cityName } = useSelector(state => state.weather);
-    const { loading, component } = useSelector(state => state.ui);
-    
+    const { loading, component, error } = useSelector(state => state.ui);
+    console.log(error);
+    const isMounted = useRef(true);
+
     const { favorites, favoriteList, removeCity } = useSelector(state => state.favorites);
     const navigate = useNavigate();
     const location = useLocation();
@@ -36,12 +39,22 @@ export const WeatherForecastScreen = () => {
 
     const { q, cityQuery } = queryString.parse(location.search)
     const citySearchQuery = q;
-    const cityLabelQuery = cityQuery;
-    const cityKey = citiesList?.find(city => city.label === cityInput)?.key
-    const cityLabel = citiesList?.find(city => city.label === cityInput)?.label
+    const cityLabelQuery = cityQuery && capitalizeFirstLetter(cityQuery?.replace(/-/g, ' '));
+    const cityKey = citiesList?.find(city => city.label === cityInput)?.key?.replace(/-/g, ' ')
+    const cityLabel = citiesList && capitalizeFirstLetter(citiesList?.find(city => city.label === cityInput)?.label?.replace(/-/g, ' '))
 
     useMemo(() => citySearchQuery && dispatch(startGetCityCurrentWeather(citySearchQuery, cityLabelQuery)), [citySearchQuery])
     useMemo(() => citySearchQuery && dispatch(startGetCityFiveDayForecast(citySearchQuery)), [citySearchQuery])
+
+    useEffect(() => {
+        if (isMounted.current && !currentWeather && !fiveDayForecast) {
+            dispatch(startGetCityCurrentWeather(telAvivKey, telAvivLabel))
+            dispatch(startGetCityFiveDayForecast(telAvivKey))
+        }
+        return () => {
+            isMounted.current = false
+        }
+    }, [])
 
     useEffect(() => {
 
@@ -60,7 +73,7 @@ export const WeatherForecastScreen = () => {
         if (favorites?.key.length > 0 && favorites?.label.length > 0) {
             const favoriteCities = JSON.parse(localStorage.getItem('favoriteCities'));
             if (!favoriteCities) {
-                localStorage.setItem('favoriteCities', JSON.stringify([{ key: favorites.key, label: favorites.label }]));
+                localStorage.setItem('favoriteCities', JSON.stringify([{ key: favorites.key || currentWeather.Link.split("/")[6], label: favorites.label || currentWeather.Link.split("/")[5].replace(/-/g, ' ') }]));
             } else {
                 const newFavoriteCities = [...favoriteCities, { key: cityKey, label: cityLabel }];
                 localStorage.setItem('favoriteCities', JSON.stringify(newFavoriteCities));
@@ -156,33 +169,17 @@ export const WeatherForecastScreen = () => {
                         spacing={2}
                     >
                         {
-                            loading && component === componentTypes.current ? <CircularProgress color="inherit" size={50} /> : null
-
-                        }
-                        {
-                            !loading && currentWeather && currentWeather.WeatherText ?
+                            currentWeather && currentWeather.WeatherText ?
                                 <Grid item xs={12}>
-                                    < WeatherDisplay cityName={cityName} currentWeather={currentWeather} />
-
-                                    <button
-                                        hidden={!disableFavButton(favoriteList, currentWeather.Link.split("/")[5])}
-                                        onClick={() => dispatch(removeFavoriteCity(currentWeather.Link.split("/")[6]))}>
-                                        remove from favs
-                                    </button>
-
-
-                                    <button onClick={() => dispatch(setFavoriteCity({ key: currentWeather.Link.split("/")[6], label: currentWeather.Link.split("/")[5] }))}
-                                        hidden={disableFavButton(favoriteList, currentWeather.Link.split("/")[5])}
-                                    >Add city to favorites
-                                    </button>
-
+                                    < WeatherDisplay 
+                                    cityName={cityName} 
+                                    currentWeather={currentWeather} 
+                                    favoriteList={favoriteList}
+                                    />
                                 </Grid>
 
                                 :
                                 null
-                        }
-                        {
-                            loading && component === componentTypes.fiveDayForecast ? <CircularProgress color="inherit" size={50} /> : null
                         }
                         {
 
@@ -199,16 +196,15 @@ export const WeatherForecastScreen = () => {
             </Box>
 
 
-            {/*
-                error && component === componentTypes.currentWeather ?
-                    <Snackbar open={openSnackbar} autoHideDuration={6000} onClose={setOpenSnackbar(false)}>
-                        <Alert onClose={setOpenSnackbar(false)} severity="success" sx={{ width: '100%' }}>
+            {
+                error && error.length > 0 ?
+
+                    <Alert sx={{ width: '50%' }}>
                         {error}
                     </Alert>
-                </Snackbar>
-                :
-                null
-                    */}
+                    : null
+
+            }
 
 
 
