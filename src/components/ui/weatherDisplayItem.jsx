@@ -1,18 +1,11 @@
-import { Box } from "@mui/system";
-import { CardMedia, Grid } from "@mui/material";
-import { Typography } from "@mui/material";
+import { useSelector } from "react-redux";
+import { Typography, Grid } from "@mui/material";
+import { transformDate } from "../../helpers/helpers";
+import { convertToFahrenheit } from "../../helpers/helpers";
 
 export const WeatherDisplayItem = ({ date, min, max, icon, isFahrenheit }) => {
 
-    //function transform celsius to fahrenheit
-    const celsiusToFahrenheit = (celsius) => {
-        return (celsius * 9 / 5) + 32;
-    }
-
-    const transformDate = (date) => {
-        return new Date(date).toDateString().split(" ")[0];
-    }
-
+    const {temperature} = useSelector(state => state.ui);
 
     return (
         <Grid
@@ -46,13 +39,13 @@ export const WeatherDisplayItem = ({ date, min, max, icon, isFahrenheit }) => {
                 className="animate__animated animate__fadeIn animate__delay-0.5s"
                 textAlign="center"
                 color="text.secondary">
-                {min}{isFahrenheit ? "°F" : "°C"}
+                {temperature === '°C' ? min : convertToFahrenheit(min)}{temperature}
             </Typography>
             <Typography
                 className="animate__animated animate__fadeIn animate__delay-0.5s"
                 textAlign="center"
                 color="text.secondary">
-                {max}{isFahrenheit ? "°F" : "°C"}
+                {temperature === '°C' ? max : convertToFahrenheit(max)}{temperature}
             </Typography>
 
         </Grid>

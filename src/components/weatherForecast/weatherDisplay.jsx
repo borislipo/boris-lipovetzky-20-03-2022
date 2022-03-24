@@ -1,4 +1,4 @@
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import { removeFavoriteCity, setFavoriteCity } from '../../actions/favoritesActions';
@@ -7,12 +7,13 @@ import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import { Box } from '@mui/system';
 import { Grid } from '@mui/material';
-import { disableFavButton } from '../../helpers/helpers';
+import { disableFavButton, convertToFahrenheit } from '../../helpers/helpers';
 
-export const WeatherDisplay = ({ cityName, currentWeather, favoriteList, cityRef, cityLableRef }) => {
+export const WeatherDisplay = ({ cityName, currentWeather, favoriteList }) => {
 
 
     const dispatch = useDispatch();
+    const { temperature } = useSelector(state => state.ui);
 
     return (
         <Grid
@@ -48,8 +49,10 @@ export const WeatherDisplay = ({ cityName, currentWeather, favoriteList, cityRef
                             {cityName}
                         </Typography>
 
-                        <Typography textAlign="center" color="text.secondary">
-                            {currentWeather.Temperature.Metric.Value}{currentWeather.Temperature.Metric.Unit}
+                        <Typography
+                            textAlign="center" color="text.secondary">
+
+                            {temperature === '°C' ? currentWeather.Temperature.Metric.Value : convertToFahrenheit(currentWeather.Temperature.Metric.Value)}{temperature}
                         </Typography>
                     </Box>
 
@@ -63,9 +66,9 @@ export const WeatherDisplay = ({ cityName, currentWeather, favoriteList, cityRef
                     flexDirection="row"
                     justifyContent="flex-end"
                 >
-                    
+
                     {
-                        
+
                         (disableFavButton(favoriteList, currentWeather.Link.split("/")[5].replace(/-/g, ' '))) ?
 
                             <Button
@@ -77,16 +80,16 @@ export const WeatherDisplay = ({ cityName, currentWeather, favoriteList, cityRef
                                 Remove Fav
                             </Button>
                             :
-                            
+
                             <Button
                                 variant="contained"
                                 color='error'
                                 endIcon={<FavoriteBorderIcon />}
-                                onClick={() => dispatch(setFavoriteCity({ key: currentWeather.Link.split("/")[6] , label: currentWeather.Link.split("/")[5].replace(/-/g, ' ') }))}
+                                onClick={() => dispatch(setFavoriteCity({ key: currentWeather.Link.split("/")[6], label: currentWeather.Link.split("/")[5].replace(/-/g, ' ') }))}
                             >
                                 Add to Favs
                             </Button>
-                        
+
                     }
 
                 </Box>

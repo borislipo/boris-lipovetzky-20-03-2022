@@ -10,8 +10,7 @@ export const types = {
     uiRemoveError: '[UI] RemoveError',
     uiStartLoading: '[UI] StartLoading',
     uiFinishLoading: '[UI] FinishLoading',
-    uiForecastLoading: '[UI] ForecastLoading',
-    uiForecastLoaded: '[UI] ForecastLoaded',
+    setTemperature: '[UI] SetTemperature',
 }
 
 export const componentTypes={

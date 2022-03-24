@@ -21,4 +21,10 @@ export const finishLoading = (component) => ({
     type: types.uiFinishLoading,
     payload: {component}
 })
+export const setTemperature = (temperature) => ({
+    type: types.setTemperature,
+    payload: temperature
+})
+
+
 

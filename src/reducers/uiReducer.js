@@ -26,6 +26,11 @@ export const uiReducer = (state = {}, action) => {
                 loading: false,
                 component: payload.component
             };
+        case types.setTemperature:
+            return {
+                ...state,
+                temperature: payload
+            };
         default:
             return state;
     }

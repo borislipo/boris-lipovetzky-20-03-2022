@@ -1,6 +1,4 @@
 import { WeatherDisplayItem } from "../ui/weatherDisplayItem"
-import { fiveDayForecastData } from "../../data/fakeData"
-import { Box } from "@mui/system"
 import { Grid } from "@mui/material"
 
 export const FideDaysDisplayComponent = ({ fiveDaysForecast }) => {

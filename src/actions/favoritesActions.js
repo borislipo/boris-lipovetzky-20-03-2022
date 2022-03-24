@@ -1,6 +1,6 @@
 import { types, componentTypes } from "../types/types";
 import { apiKey, url } from "../api/config";
-import {  startLoading, finishLoading } from "./uiActions";
+import {  startLoading, finishLoading, setError} from "./uiActions";
 
 
 export const setFavoriteCity = (payload) => {

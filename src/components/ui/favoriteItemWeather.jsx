@@ -1,8 +1,12 @@
-import { useNavigate } from "react-router-dom"
-import { Box, Button, Grid } from "@mui/material"
-import { CardMedia, Typography } from "@mui/material"
+import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { Box, Button, Grid } from "@mui/material";
+import { CardMedia, Typography } from "@mui/material";
+import {convertToFahrenheit} from "../../helpers/helpers";
 
-export const FavoriteItemWeather = ({ cityName, currentWeather, icon, isFahrenheit, navigateLink }) => {
+export const FavoriteItemWeather = ({ cityName, currentWeather, icon, navigateLink }) => {
+
+    const {temperature} = useSelector(state => state.ui);
 
     const navigate = useNavigate();
     return (
@@ -28,7 +32,7 @@ export const FavoriteItemWeather = ({ cityName, currentWeather, icon, isFahrenhe
                 {cityName}
             </Typography>
             <Typography textAlign="center" color="text.secondary">
-                {currentWeather}{isFahrenheit ? "°F" : "°C"}
+                {temperature === '°C' ? currentWeather : convertToFahrenheit(currentWeather)}{temperature}
             </Typography>
             <Button
                 variant="contained"

@@ -6,7 +6,7 @@ import { useForm } from "../../hooks/useForm";
 import { componentTypes } from "../../types/types";
 import { startGetCitiesList, startGetCityCurrentWeather, startGetCityFiveDayForecast } from "../../actions/weatherActions";
 import { setFavoriteCity, removeFavoriteCity, getFavoriteCities } from "../../actions/favoritesActions";
-import { removeCityFromLocalStorage, capitalizeFirstLetter, geoOptions, geoSuccess, geoErr } from "../../helpers/helpers";
+import { removeCityFromLocalStorage, capitalizeFirstLetter } from "../../helpers/helpers";
 import { WeatherDisplay } from "./weatherDisplay";
 import { FideDaysDisplayComponent } from "./fideDaysDisplayComponent";
 import { telAvivKey, telAvivLabel } from "../../api/config";
@@ -19,10 +19,11 @@ import Box from '@mui/material/Box';
 import Paper from '@mui/material/Paper';
 import Button from '@mui/material/Button';
 import { Grid } from "@mui/material";
+import { setTemperature } from "../../actions/uiActions";
 
 export const WeatherForecastScreen = () => {
     const { citiesList, currentWeather, fiveDayForecast, cityName } = useSelector(state => state.weather);
-    const { loading, component, error } = useSelector(state => state.ui);
+    const { loading, component, error, temperature } = useSelector(state => state.ui);
     const isMounted = useRef(true);
     const cityKeyRef = useRef(currentWeather?.Link?.split("/")[6]);
     const cityLabelRef = useRef(currentWeather?.Link?.split("/")[5].replace(/-/g, ' '));
@@ -75,6 +76,7 @@ export const WeatherForecastScreen = () => {
     useEffect(() => {
         
         if (isMounted.current && !currentWeather && !fiveDayForecast) {
+            dispatch(setTemperature('°C'));
             navigator.geolocation.getCurrentPosition(geoSuccess, geoErr, geoOptions);
             dispatch(startGetCityCurrentWeather(telAvivKey, telAvivLabel))
             dispatch(startGetCityFiveDayForecast(telAvivKey))
@@ -144,7 +146,7 @@ export const WeatherForecastScreen = () => {
                     fullWidth
                     onInputChange={(event, newInputValue) => handleInputChange(event, newInputValue)}
                     id="cityInput"
-                    sx={{ width: 300 }}
+                    sx={{ width: '100%' }}
                     open={open}
                     onOpen={() => {
                         setOpen(true);
@@ -173,6 +175,12 @@ export const WeatherForecastScreen = () => {
                 />
 
                 <Button variant="contained" size="large" onClick={() => navigate(`?q=${cityKey}&cityQuery=${cityLabel}`)}>Search</Button>
+                {
+                    temperature && temperature === '°C' ?
+                        <Button variant="contained" size="large" onClick={() => dispatch(setTemperature('°F'))}>°F</Button>
+                        :
+                        <Button variant="contained" size="large" onClick={() => dispatch(setTemperature('°C'))}>°C</Button>
+                }
             </Box>
 
             <Box

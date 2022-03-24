@@ -16,3 +16,11 @@ export const disableFavButton = (favoriteList, cityName) => {
 export const capitalizeFirstLetter = (string) => {
     return string?.charAt(0).toUpperCase() + string?.slice(1);
 }
+
+export const convertToFahrenheit = (temp) => {
+    return Math.round((temp * 9 / 5) + 32);
+}
+
+export const transformDate = (date) => {
+    return new Date(date).toDateString().split(" ")[0];
+}
