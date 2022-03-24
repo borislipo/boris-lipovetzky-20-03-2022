@@ -23,7 +23,7 @@ export const NavBar = () => {
                             >
                                 <img
                                     className="animate__animated animate__fadeIn animate__delay-0.5s"
-                                    src={process.env.PUBLIC_URL + `./assets/weatherfy.png`} alt="logo icon" />
+                                    src={`/assets/weatherfy.png`} alt="logo icon" />
                             </Grid>
 
                             <Grid

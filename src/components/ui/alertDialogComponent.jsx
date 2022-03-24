@@ -32,7 +32,7 @@ export const AlertDialogComponent = ({ error }) => {
                     <img
                         className="animate__animated animate__fadeIn animate__delay-0.5s"
                         style={{ width: "100px", height: "100px", borderRadius: "10%", marginTop: "10px" }}
-                        src={process.env.PUBLIC_URL + `./assets/smallLogo.png`}
+                        src={`/assets/smallLogo.png`}
                         alt="logo icon" />
                 </Box>
                 <DialogContent >
