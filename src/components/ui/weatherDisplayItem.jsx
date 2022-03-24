@@ -39,16 +39,14 @@ export const WeatherDisplayItem = ({ date, min, max, icon }) => {
                 className="animate__animated animate__fadeIn animate__delay-0.5s"
                 textAlign="center"
                 color="text.secondary">
-                {temperature === '°C' ? min : convertToFahrenheit(min)}{temperature}
+                {temperature === '°C' ? max : convertToFahrenheit(max)}{temperature}
             </Typography>
             <Typography
                 className="animate__animated animate__fadeIn animate__delay-0.5s"
                 textAlign="center"
                 color="text.secondary">
-                {temperature === '°C' ? max : convertToFahrenheit(max)}{temperature}
+                {temperature === '°C' ? min : convertToFahrenheit(min)}{temperature}
             </Typography>
-
         </Grid>
-
     )
 }
