@@ -25,7 +25,7 @@ export const WeatherDisplayItem = ({ date, min, max, icon }) => {
             <img
                 className="animate__animated animate__fadeIn animate__delay-0.5s"
                 style={{ width: "100%", height: "auto" }}
-                src={process.env.PUBLIC_URL + `assets/${icon}.svg`}
+                src={process.env.PUBLIC_URL + `./assets/${icon}.svg`}
                 alt="weather icon"
             />
             <Typography
