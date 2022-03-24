@@ -25,7 +25,7 @@ export const FavoriteItemWeather = ({ cityName, currentWeather, icon, navigateLi
             <img
                 className="animate__animated animate__fadeIn animate__delay-0.5s"
                 style={{width: "100%", height: "auto"}}
-                src={`/assets/${icon}.svg`}
+                src={`./assets/${icon}.svg`}
                 alt="weather icon"
             />
             <Typography textAlign="center" variant="h6" component="div">

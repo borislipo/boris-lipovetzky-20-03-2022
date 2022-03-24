@@ -29,7 +29,7 @@ export const WeatherDisplay = ({ cityName, currentWeather, favoriteList }) => {
                             className="animate__animated animate__fadeIn animate__delay-0.5s"
                             component="img"
                             height="140"
-                            image={`/assets/${currentWeather.WeatherIcon}.svg`}
+                            image={`./assets/${currentWeather.WeatherIcon}.svg`}
                             alt="weather icon"
                         />
                     </Box>
