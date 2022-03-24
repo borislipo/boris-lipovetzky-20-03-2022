@@ -12,7 +12,7 @@ export const DashboardRouter = () => {
                     <Route path="forecast" element={<WeatherForecastScreen />} />
                     <Route path="favorites" element={<FavoriteCitiesScreen />} />
                     <Route path="/" element={<WeatherForecastScreen />} />
-                    <Route path="*" element={<h1>Not found</h1>} />
+                    <Route path="*" element={<WeatherForecastScreen />} />
                 </Routes>
             </div>
 
