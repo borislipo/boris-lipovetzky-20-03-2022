@@ -2,15 +2,10 @@ import { useDispatch, useSelector } from 'react-redux';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import { removeFavoriteCity, setFavoriteCity } from '../../actions/favoritesActions';
-import CardMedia from '@mui/material/CardMedia';
-import Button from '@mui/material/Button';
-import Typography from '@mui/material/Typography';
-import { Box } from '@mui/system';
-import { Grid } from '@mui/material';
+import { Grid, CardMedia, Button, Typography, Box} from '@mui/material';
 import { disableFavButton, convertToFahrenheit } from '../../helpers/helpers';
 
 export const WeatherDisplay = ({ cityName, currentWeather, favoriteList }) => {
-
 
     const dispatch = useDispatch();
     const { temperature } = useSelector(state => state.ui);
@@ -21,7 +16,6 @@ export const WeatherDisplay = ({ cityName, currentWeather, favoriteList }) => {
             container
             direction="row"
         >
-
             <Grid
                 item
                 xs={7}
@@ -29,7 +23,6 @@ export const WeatherDisplay = ({ cityName, currentWeather, favoriteList }) => {
                 <Box
                     display="flex"
                     flexDirection="row"
-
                 >
                     <Box >
                         <CardMedia
@@ -66,9 +59,7 @@ export const WeatherDisplay = ({ cityName, currentWeather, favoriteList }) => {
                     flexDirection="row"
                     justifyContent="flex-end"
                 >
-
                     {
-
                         (disableFavButton(favoriteList, currentWeather.Link.split("/")[5].replace(/-/g, ' '))) ?
 
                             <Button
@@ -89,9 +80,7 @@ export const WeatherDisplay = ({ cityName, currentWeather, favoriteList }) => {
                             >
                                 Add to Favs
                             </Button>
-
                     }
-
                 </Box>
 
             </Grid>

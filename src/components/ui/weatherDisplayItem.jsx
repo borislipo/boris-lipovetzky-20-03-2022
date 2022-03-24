@@ -3,9 +3,9 @@ import { Typography, Grid } from "@mui/material";
 import { transformDate } from "../../helpers/helpers";
 import { convertToFahrenheit } from "../../helpers/helpers";
 
-export const WeatherDisplayItem = ({ date, min, max, icon, isFahrenheit }) => {
+export const WeatherDisplayItem = ({ date, min, max, icon }) => {
 
-    const {temperature} = useSelector(state => state.ui);
+    const { temperature } = useSelector(state => state.ui);
 
     return (
         <Grid

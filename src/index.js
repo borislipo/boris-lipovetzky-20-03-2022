@@ -4,8 +4,7 @@ import { WeatherApp } from './weatherApp';
 
 
 ReactDOM.render(
-  
-    <WeatherApp />
+  <WeatherApp />
   ,
   document.getElementById('root')
 );

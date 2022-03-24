@@ -3,8 +3,6 @@ import { Grid } from "@mui/material"
 
 export const FideDaysDisplayComponent = ({ fiveDaysForecast }) => {
 
-    
-    
     return (
         <Grid
             className="animate__animated animate__fadeIn animate__delay-0.5s"
@@ -12,7 +10,6 @@ export const FideDaysDisplayComponent = ({ fiveDaysForecast }) => {
             direction="row"
             justify="space-between"
             alignItems="center"
-            
         >
             {
                 fiveDaysForecast.map((day) => {
@@ -28,7 +25,6 @@ export const FideDaysDisplayComponent = ({ fiveDaysForecast }) => {
                     )
                 })
             }
-
         </Grid>
     )
 

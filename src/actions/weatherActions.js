@@ -8,7 +8,7 @@ export const startGetCitiesList = (query) => {
         try {
             dispatch(startLoading(componentTypes.autocomplete));
             const response = await fetch(`${url}/locations/v1/cities/autocomplete?apikey=${apiKey}&q=${query}`);
-            if (response.status === 400) {
+            if(!response.ok) {
                 return dispatch(setError(response.statusText));
             }
             const data = await response.json();
@@ -21,8 +21,7 @@ export const startGetCitiesList = (query) => {
             dispatch(getCitiesList(autoCompleteCities.slice(0,5)));
             dispatch(finishLoading(componentTypes.autocomplete));
         } catch (error) {
-            console.log(error)
-           
+            return dispatch(setError(error.message)); 
         }
     }
 }
@@ -35,18 +34,16 @@ export const getCitiesList = (payload)=>{
 }
 
 export const startGetCityCurrentWeather = (Key, label) => {
-
     return async (dispatch) => {
         try {
             const response = await fetch(`${url}/currentconditions/v1/${Key}?apikey=${apiKey}`);
-            if(response.status === 400){
+            if (!response.ok) {
                 return dispatch(setError(response.statusText));
             }
             const data = await response.json();
             dispatch(getCityCurrentWeather({weatherData : data[0], cityName: label}));
         } catch (error) {
-            console.log(error);
-          
+            return dispatch(setError(error.message)); 
         }
     }
 }
@@ -63,15 +60,14 @@ export const startGetCityFiveDayForecast = (Key) => {
         try {
             dispatch(startLoading(componentTypes.fiveDayForecast));
             const response = await fetch(`${url}/forecasts/v1/daily/5day/${Key}?apikey=${apiKey}&language=en-us&details=false&metric=true`);
-            if (response.status === 400) {
+            if (!response.ok) {
                 return dispatch(setError(response.statusText));
             }
             const data = await response.json();
             dispatch(getCityFiveDayForecast(data.DailyForecasts));
             dispatch(finishLoading(componentTypes.fiveDayForecast));
         } catch (error) {
-            console.log(error)
-           
+            return dispatch(setError(error.message)); 
         }
     }
 }

@@ -1,15 +1,7 @@
-import { NavLink, Link, useNavigate } from 'react-router-dom'
-import { Grid } from '@mui/material';
-import AppBar from '@mui/material/AppBar';
-import Box from '@mui/material/Box';
-import Toolbar from '@mui/material/Toolbar';
-import Typography from '@mui/material/Typography';
-import Button from '@mui/material/Button';
-import IconButton from '@mui/material/IconButton';
+import { NavLink } from 'react-router-dom'
+import { Grid, AppBar, Box, Toolbar, Button } from '@mui/material';
 
 export const NavBar = () => {
-    const navigate = useNavigate();
-
 
     return (
 
@@ -28,9 +20,10 @@ export const NavBar = () => {
                                 md={6}
                                 lg={6}
                                 xl={6}
-
-                                >
-                                <img src={process.env.PUBLIC_URL + `assets/weatherfy.png`} alt="logo icon" />
+                            >
+                                <img
+                                    className="animate__animated animate__fadeIn animate__delay-0.5s"
+                                    src={process.env.PUBLIC_URL + `assets/weatherfy.png`} alt="logo icon" />
                             </Grid>
 
                             <Grid
@@ -52,22 +45,20 @@ export const NavBar = () => {
                                     <NavLink
                                         style={{ textDecoration: 'none' }}
                                         to="/forecast">
-                                        <Button variant="contained" >
+                                        <Button sx={{ margin: "5px" }} variant="contained" >
                                             Weather Forecast
                                         </Button>
                                     </NavLink>
                                     <NavLink
                                         style={{ textDecoration: 'none' }}
                                         to="/favorites">
-                                        <Button variant="contained" >
+                                        <Button sx={{ margin: "5px" }} variant="contained" >
                                             Favorite Cities
                                         </Button>
                                     </NavLink>
                                 </Box>
                             </Grid>
-
                         </Grid>
-
                     </Toolbar>
                 </AppBar>
             </Box>

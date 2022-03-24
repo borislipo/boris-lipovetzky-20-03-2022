@@ -1,5 +1,4 @@
-import { useEffect, useMemo } from "react";
-import { useNavigate } from "react-router-dom";
+import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { getFavoriteCities, startGetFavoritesWeather } from "../../actions/favoritesActions";
 import { FavoriteItemWeather } from "../ui/favoriteItemWeather";
@@ -46,8 +45,6 @@ export const FavoriteCitiesScreen = () => {
                 alignItems="center"
                 spacing={2}
             >
-                
-                
                 {
                     favoriteList && favoriteList.length > 0 && favoritesWeather && favoritesWeather.map(city => {
                         return (
@@ -57,7 +54,7 @@ export const FavoriteCitiesScreen = () => {
                                 currentWeather={city[0].Temperature.Metric.Value}
                                 icon={city[0].WeatherIcon}
                                 isFahrenheit={false}
-                                navigateLink={`/forecast?q=${city[0].Link.split('/')[6]}&cityQuery=${capitalizeFirstLetter(city[0].Link.split('/')[5].replace(/-/g, ' ')) }`}
+                                navigateLink={`/forecast?q=${city[0].Link.split('/')[6]}&cityQuery=${capitalizeFirstLetter(city[0].Link.split('/')[5].replace(/-/g, ' '))}`}
                             />
 
                         )
@@ -66,6 +63,5 @@ export const FavoriteCitiesScreen = () => {
                 }
             </Grid>
         </Box>
-
     )
 }

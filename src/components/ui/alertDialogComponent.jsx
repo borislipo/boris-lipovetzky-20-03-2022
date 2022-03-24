@@ -1,13 +1,11 @@
-import {useState} from 'react';
-import { useSelector, useDispatch } from "react-redux"
-import { setError, removeError } from "../../actions/uiActions"
+import { useDispatch } from "react-redux"
+import { removeError } from "../../actions/uiActions"
 import { Box } from "@mui/system"
-import { Dialog, DialogContent, DialogActions, Typography, Button, DialogTitle } from "@mui/material"
-import { Error } from "@mui/icons-material"
+import { Dialog, DialogContent, Typography, DialogTitle } from "@mui/material"
 
 
-export const AlertDialogComponent = ({error}) => {
-   const dispatch = useDispatch();
+export const AlertDialogComponent = ({ error }) => {
+    const dispatch = useDispatch();
 
     const handleClose = () => {
         dispatch(removeError())
@@ -15,27 +13,31 @@ export const AlertDialogComponent = ({error}) => {
 
     return (
 
-        <Box sx={{
-            padding: 2,
-            border: 4,
-        }}>
+        <Box
+            className="animate__animated animate__fadeIn animate__delay-0.5s"
+            sx={{
+                padding: 2,
+                border: 4,
+            }}>
             <Dialog open
                 onClose={handleClose}
             >
                 <Box
-                container
-                display="flex"
-                flexDirection="column"
-                justifyContent="center"
-                alignItems="center"
+                    container
+                    display="flex"
+                    flexDirection="column"
+                    justifyContent="center"
+                    alignItems="center"
                 >
-                    <img style={{width:"100px", height:"100px"}}
-                    src={process.env.PUBLIC_URL + `assets/smallLogo.png`} 
-                    alt="logo icon" />
+                    <img
+                        className="animate__animated animate__fadeIn animate__delay-0.5s"
+                        style={{ width: "100px", height: "100px", borderRadius: "10%", marginTop: "10px" }}
+                        src={process.env.PUBLIC_URL + `assets/smallLogo.png`}
+                        alt="logo icon" />
                 </Box>
                 <DialogContent >
                     <DialogTitle >
-                       { `Something Went Wrong :(`}
+                        {`Something Went Wrong :(`}
                     </DialogTitle>
                     <Typography variant='h5' align='center' gutterBottom>
                         {error}

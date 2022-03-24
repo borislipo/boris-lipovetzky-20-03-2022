@@ -1,7 +1,7 @@
 import { useEffect, useState, useMemo, useRef } from "react";
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, useLocation } from 'react-router-dom'
-import { url,apiKey } from "../../api/config";
+import { url, apiKey } from "../../api/config";
 import { useForm } from "../../hooks/useForm";
 import { componentTypes } from "../../types/types";
 import { startGetCitiesList, startGetCityCurrentWeather, startGetCityFiveDayForecast } from "../../actions/weatherActions";
@@ -11,15 +11,9 @@ import { WeatherDisplay } from "./weatherDisplay";
 import { FideDaysDisplayComponent } from "./fideDaysDisplayComponent";
 import { telAvivKey, telAvivLabel } from "../../api/config";
 import { AlertDialogComponent } from "../ui/alertDialogComponent";
+import { Grid, Box, Paper, Button, CircularProgress, Autocomplete, TextField } from "@mui/material";
+import { setTemperature, setError } from "../../actions/uiActions";
 import queryString from 'query-string';
-import TextField from '@mui/material/TextField';
-import Autocomplete from '@mui/material/Autocomplete';
-import CircularProgress from '@mui/material/CircularProgress';
-import Box from '@mui/material/Box';
-import Paper from '@mui/material/Paper';
-import Button from '@mui/material/Button';
-import { Grid } from "@mui/material";
-import { setTemperature } from "../../actions/uiActions";
 
 export const WeatherForecastScreen = () => {
     const { citiesList, currentWeather, fiveDayForecast, cityName } = useSelector(state => state.weather);
@@ -47,39 +41,46 @@ export const WeatherForecastScreen = () => {
     useMemo(() => citySearchQuery && dispatch(startGetCityCurrentWeather(citySearchQuery, cityLabelQuery)), [citySearchQuery])
     useMemo(() => citySearchQuery && dispatch(startGetCityFiveDayForecast(citySearchQuery)), [citySearchQuery])
 
-    const  geoOptions = {
+    const geoOptions = {
         enableHighAccuracy: true,
         timeout: 5000,
         maximumAge: 0
     };
 
-    const geoSuccess =  async(pos) => {
-        var crd = pos.coords;
-        const reponse = await fetch(`${url}/locations/v1/cities/geoposition/search?apikey=${apiKey}&q=${crd.latitude},${crd.longitude}`)
-        const data = await reponse.json();
-        const city = data.LocalizedName;
-        const cityKey = data.Key;
-        dispatch(startGetCityCurrentWeather(cityKey, city));
-        dispatch(startGetCityFiveDayForecast(cityKey));
+    const geoSuccess = async (pos) => {
+        try {
+            var crd = pos.coords;
+            const response = await fetch(`${url}/locations/v1/cities/geoposition/search?apikey=${apiKey}&q=${crd.latitude},${crd.longitude}`)
+            if (!response.ok) {
+                return dispatch(setError(response.statusText));
+            }
+            const data = await response.json();
+            const city = data.LocalizedName;
+            const cityKey = data.Key;
+            dispatch(startGetCityCurrentWeather(cityKey, city));
+            dispatch(startGetCityFiveDayForecast(cityKey));
+        } catch (error) {
+            return dispatch(setError(error.message)); 
+        }
+
     }
 
     const geoErr = (err) => {
         console.warn(`ERROR(${err.code}): ${err.message}`);
     }
 
-    
     useEffect(() => {
         cityKeyRef.current = currentWeather?.Link?.split("/")[6];
         cityLabelRef.current = currentWeather?.Link?.split("/")[5].replace(/-/g, ' ');
     }, [currentWeather, citySearchQuery])
-    
+
     useEffect(() => {
-        
+
         if (isMounted.current && !currentWeather && !fiveDayForecast) {
             dispatch(setTemperature('°C'));
             navigator.geolocation.getCurrentPosition(geoSuccess, geoErr, geoOptions);
-            dispatch(startGetCityCurrentWeather(telAvivKey, telAvivLabel))
-            dispatch(startGetCityFiveDayForecast(telAvivKey))
+            dispatch(startGetCityCurrentWeather(telAvivKey, telAvivLabel));
+            dispatch(startGetCityFiveDayForecast(telAvivKey));
         }
         return () => {
             isMounted.current = false
@@ -109,19 +110,19 @@ export const WeatherForecastScreen = () => {
                 localStorage.setItem('favoriteCities', JSON.stringify(newFavoriteCities));
             }
         }
-        dispatch(setFavoriteCity(null))
+        dispatch(setFavoriteCity(null));
 
     }, [favorites])
 
     useEffect(() => {
-        dispatch(getFavoriteCities())
+        dispatch(getFavoriteCities());
     }, [favorites, removeCity])
 
     useEffect(() => {
         if (removeCity) {
-            removeCityFromLocalStorage(removeCity)
+            removeCityFromLocalStorage(removeCity);
         }
-        dispatch(removeFavoriteCity(null))
+        dispatch(removeFavoriteCity(null));
     }, [removeCity])
 
 
@@ -139,50 +140,79 @@ export const WeatherForecastScreen = () => {
                 flexDirection="row"
                 alignItems="center"
                 justifyContent="space-between"
-                sx={{ width: '30%', marginBottom: '1rem' }}
+                sx={{ width: '70%', marginBottom: '1rem' }}
             >
 
-                <Autocomplete
-                    fullWidth
-                    onInputChange={(event, newInputValue) => handleInputChange(event, newInputValue)}
-                    id="cityInput"
-                    sx={{ width: '100%' }}
-                    open={open}
-                    onOpen={() => {
-                        setOpen(true);
-                    }}
-                    onClose={() => {
-                        setOpen(false);
-                    }}
-                    isOptionEqualToValue={(option, value) => option.label === value.label}
-                    getOptionLabel={(option) => option.label}
-                    options={citiesList ? citiesList : []}
-                    loading={loading}
-                    renderInput={(params) => (
-                        <TextField
-                            {...params}
-                            InputProps={{
-                                ...params.InputProps,
-                                endAdornment: (
-                                    <>
-                                        {loading && component === componentTypes.autocomplete ? <CircularProgress color="inherit" size={20} /> : null}
-                                        {params.InputProps.endAdornment}
-                                    </>
-                                ),
+                <Grid
+                    container
+                    direction="row"
+                >
+                    <Grid
+                        item
+                        xs={12}
+                        sm={12}
+                        md={8}
+                        lg={8}
+                        xl={8}
+                    >
+                        <Autocomplete
+                            fullWidth
+                            onInputChange={(event, newInputValue) => handleInputChange(event, newInputValue)}
+                            id="cityInput"
+                            sx={{ width: '100%' }}
+                            open={open}
+                            onOpen={() => {
+                                setOpen(true);
                             }}
+                            onClose={() => {
+                                setOpen(false);
+                            }}
+                            isOptionEqualToValue={(option, value) => option.label === value.label}
+                            getOptionLabel={(option) => option.label}
+                            options={citiesList ? citiesList : []}
+                            loading={loading}
+                            renderInput={(params) => (
+                                <TextField
+                                    {...params}
+                                    InputProps={{
+                                        ...params.InputProps,
+                                        endAdornment: (
+                                            <>
+                                                {loading && component === componentTypes.autocomplete ? <CircularProgress color="inherit" size={20} /> : null}
+                                                {params.InputProps.endAdornment}
+                                            </>
+                                        ),
+                                    }}
+                                />
+                            )}
                         />
-                    )}
-                />
-
-                <Button variant="contained" size="large" onClick={() => navigate(`?q=${cityKey}&cityQuery=${cityLabel}`)}>Search</Button>
-                {
-                    temperature && temperature === '°C' ?
-                        <Button variant="contained" size="large" onClick={() => dispatch(setTemperature('°F'))}>°F</Button>
-                        :
-                        <Button variant="contained" size="large" onClick={() => dispatch(setTemperature('°C'))}>°C</Button>
-                }
+                    </Grid>
+                    <Grid item
+                        xs={5}
+                        sm={5}
+                        md={2}
+                        lg={2}
+                        xl={2}
+                    >
+                        <Button sx={{ margin: "5px 10px" }} variant="contained" size="large" onClick={() => navigate(`?q=${cityKey}&cityQuery=${cityLabel}`)}>Search</Button>
+                    </Grid>
+                    <Grid
+                        item
+                        xs={5}
+                        sm={5}
+                        md={1}
+                        lg={1}
+                        xl={1}
+                    >
+                        {
+                            temperature && temperature === '°C' ?
+                                <Button sx={{ margin: "5px" }} variant="contained" size="large" onClick={() => dispatch(setTemperature('°F'))}>°F</Button>
+                                :
+                                <Button sx={{ margin: "5px"}} variant="contained" size="large" onClick={() => dispatch(setTemperature('°C'))}>°C</Button>
+                        }
+                    </Grid>
+                </Grid>
             </Box>
-
             <Box
                 display="flex"
                 flexDirection="column"
@@ -207,10 +237,10 @@ export const WeatherForecastScreen = () => {
                         {
                             currentWeather && currentWeather.WeatherText ?
                                 <Grid item xs={12}>
-                                    < WeatherDisplay 
-                                    cityName={cityName} 
-                                    currentWeather={currentWeather} 
-                                    favoriteList={favoriteList}
+                                    < WeatherDisplay
+                                        cityName={cityName}
+                                        currentWeather={currentWeather}
+                                        favoriteList={favoriteList}
                                     />
                                 </Grid>
 
@@ -233,7 +263,7 @@ export const WeatherForecastScreen = () => {
                     </Grid>
                 </Paper>
             </Box>
-        
+
         </Box >
     )
 }

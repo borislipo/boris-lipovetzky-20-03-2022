@@ -1,7 +1,6 @@
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { Box, Button, Grid } from "@mui/material";
-import { CardMedia, Typography } from "@mui/material";
+import { Button, Grid, Typography } from "@mui/material";
 import {convertToFahrenheit} from "../../helpers/helpers";
 
 export const FavoriteItemWeather = ({ cityName, currentWeather, icon, navigateLink }) => {
@@ -24,6 +23,7 @@ export const FavoriteItemWeather = ({ cityName, currentWeather, icon, navigateLi
                 margin: "0 auto"
             }}>
             <img
+                className="animate__animated animate__fadeIn animate__delay-0.5s"
                 style={{width: "100%", height: "auto"}}
                 src={process.env.PUBLIC_URL + `assets/${icon}.svg`}
                 alt="weather icon"

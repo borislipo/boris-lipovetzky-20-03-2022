@@ -30,10 +30,10 @@ export const startGetFavoritesWeather = (list) => {
             dispatch(startLoading(componentTypes.favorites));
             const weatherPromises = list.map(async (city) => {
                 const response = await fetch(`${url}/currentconditions/v1/${city.key}?apikey=${apiKey}`);
-                if (response.status === 400) {
+                if (!response.ok) {
                     return dispatch(setError(response.statusText));
                 }
-                const data = await response.json()
+                const data = await response.json();
                 return data;
             });
             const weather = await Promise.all(weatherPromises);
@@ -41,7 +41,7 @@ export const startGetFavoritesWeather = (list) => {
             dispatch(finishLoading(componentTypes.favorites));
         }
         catch (error) {
-            console.log(error);
+            return dispatch(setError(error.message));
         }
 
     }
