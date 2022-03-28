@@ -33,7 +33,7 @@ export const getCitiesList = (payload)=>{
     }
 }
 
-export const startGetCityCurrentWeather = (Key, label) => {
+export const startGetCityCurrentWeather = (Key) => {
     return async (dispatch) => {
         try {
             const response = await fetch(`${url}/currentconditions/v1/${Key}?apikey=${apiKey}`);
@@ -41,7 +41,7 @@ export const startGetCityCurrentWeather = (Key, label) => {
                 return dispatch(setError(response.statusText));
             }
             const data = await response.json();
-            dispatch(getCityCurrentWeather({weatherData : data[0], cityName: label}));
+            dispatch(getCityCurrentWeather({weatherData : data[0]}));
         } catch (error) {
             return dispatch(setError(error.message)); 
         }
