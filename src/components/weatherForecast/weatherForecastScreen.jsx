@@ -1,23 +1,22 @@
 import { useEffect, useMemo, useRef } from "react";
 import { useDispatch, useSelector } from 'react-redux';
-import { useLocation } from 'react-router-dom'
+import { useLocation } from 'react-router-dom';
 import { url, apiKey } from "../../api/config";
 import { startGetCityCurrentWeather, startGetCityFiveDayForecast } from "../../actions/weatherActions";
 import { setFavoriteCity, removeFavoriteCity, getFavoriteCities } from "../../actions/favoritesActions";
+import { setTemperature, setError } from "../../actions/uiActions";
 import { removeCityFromLocalStorage, capitalizeFirstLetter, getGeolocalizationWeather } from "../../helpers/helpers";
 import { AutoCompleteComponent } from "../ui/autoCompleteComponent";
-import { WeatherDisplay } from "./weatherDisplay";
-import { FideDaysDisplayComponent } from "./fideDaysDisplayComponent";
-import { telAvivKey, telAvivLabel } from "../../api/config";
+import { WeatherDisplayComponent } from "./weatherDisplayComponent";
+import { telAvivKey } from "../../api/config";
 import { AlertDialogComponent } from "../ui/alertDialogComponent";
-import { Grid, Box, Paper, Button } from "@mui/material";
-import { setTemperature, setError } from "../../actions/uiActions";
+import { Grid, Box, Button } from "@mui/material";
 import queryString from 'query-string';
 
 export const WeatherForecastScreen = () => {
     const { currentWeather, fiveDayForecast } = useSelector(state => state.weather);
     const { error, temperature } = useSelector(state => state.ui);
-    const { favorites, favoriteList, removeCity } = useSelector(state => state.favorites);
+    const { favorites, removeCity } = useSelector(state => state.favorites);
     const isMounted = useRef(true);
     const cityKeyRef = useRef(currentWeather?.Link?.split("/")[6]);
     const cityLabelRef = useRef(capitalizeFirstLetter(currentWeather?.Link?.split("/")[5].replace(/-/g, ' ')));
@@ -25,12 +24,12 @@ export const WeatherForecastScreen = () => {
     const location = useLocation();
     const dispatch = useDispatch();
 
-    const { cityKeySearchQuery } = queryString.parse(location.search)
+    const { cityKeySearchQuery } = queryString.parse(location.search);
 
     const geoSuccess = async (pos) => {
         try {
             var crd = pos.coords;
-            const response = await fetch(`${url}/locations/v1/cities/geoposition/search?apikey=${apiKey}&q=${crd.latitude},${crd.longitude}`)
+            const response = await fetch(`${url}/locations/v1/cities/geoposition/search?apikey=${apiKey}&q=${crd.latitude},${crd.longitude}`);
             if (!response.ok) {
                 return dispatch(setError(response.statusText));
             }
@@ -54,8 +53,8 @@ export const WeatherForecastScreen = () => {
 
     useEffect(() => {
 
-        if (isMounted.current && !currentWeather && !fiveDayForecast) {
-            dispatch(setTemperature('°C'));
+        dispatch(setTemperature('°C'));
+        if (isMounted.current && !currentWeather && !fiveDayForecast && !cityKeySearchQuery) {
             getGeolocalizationWeather(geoSuccess);
             dispatch(startGetCityCurrentWeather(telAvivKey));
             dispatch(startGetCityFiveDayForecast(telAvivKey));
@@ -145,45 +144,10 @@ export const WeatherForecastScreen = () => {
                 justifyContent="center"
                 sx={{ width: '100%' }}
             >
-                <Paper
-                    className="animate__animated animate__fadeIn animate__delay-0.5s"
-                    sx={{ width: '80%', height: '80%', padding: '1rem' }}
-                    elevation={3}>
-                    <Grid
-                        container
-                        direction="row"
-                        wrap="wrap"
-                        flexWrap="wrap"
-                        justify="space-between"
-                        alignItems="center"
-                        spacing={2}
-                    >
-                        {
-                            currentWeather && currentWeather.WeatherText ?
-                                <Grid item xs={12}>
-                                    < WeatherDisplay
-                                        cityName={capitalizeFirstLetter(currentWeather.Link?.split("/")[5].replace(/-/g, ' '))}
-                                        currentWeather={currentWeather}
-                                        favoriteList={favoriteList}
-                                    />
-                                </Grid>
-                                :
-                                null
-                        }
-                        {
-
-                            fiveDayForecast && fiveDayForecast.length > 0 ?
-                                <Grid item xs={12}>
-                                    <FideDaysDisplayComponent fiveDaysForecast={fiveDayForecast} />
-                                </Grid>
-                                :
-                                null
-                        }
-                        {
-                            error ? <AlertDialogComponent error={error} /> : null
-                        }
-                    </Grid>
-                </Paper>
+                <WeatherDisplayComponent />
+                {
+                    error ? <AlertDialogComponent error={error} /> : null
+                }
             </Box>
 
         </Box >

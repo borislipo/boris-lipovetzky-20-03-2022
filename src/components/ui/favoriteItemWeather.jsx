@@ -1,11 +1,11 @@
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { Button, Grid, Typography } from "@mui/material";
-import {convertToFahrenheit} from "../../helpers/helpers";
+import { Button, Grid, Typography, Box } from "@mui/material";
+import { convertToFahrenheit } from "../../helpers/helpers";
 
 export const FavoriteItemWeather = ({ cityName, currentWeather, icon, navigateLink }) => {
 
-    const {temperature} = useSelector(state => state.ui);
+    const { temperature } = useSelector(state => state.ui);
 
     const navigate = useNavigate();
     return (
@@ -24,7 +24,7 @@ export const FavoriteItemWeather = ({ cityName, currentWeather, icon, navigateLi
             }}>
             <img
                 className="animate__animated animate__fadeIn animate__delay-0.5s"
-                style={{width: "100%", height: "auto"}}
+                style={{ width: "100%", height: "auto" }}
                 src={`./assets/${icon}.svg`}
                 alt="weather icon"
             />
@@ -32,13 +32,21 @@ export const FavoriteItemWeather = ({ cityName, currentWeather, icon, navigateLi
                 {cityName}
             </Typography>
             <Typography textAlign="center" color="text.secondary">
-                {temperature === '°C' ? currentWeather : convertToFahrenheit(currentWeather)}{temperature}
+                {temperature === '°C' ? ` ${currentWeather}°C ` : `${convertToFahrenheit(currentWeather)}°F`}
             </Typography>
-            <Button
-                variant="contained"
-                onClick={() => navigate(navigateLink)}>
-                More..
-            </Button>
+            <Box
+                display="flex"
+                flexDirection="row"
+                alignItems="center"
+                justifyContent="center"
+            >
+                <Button
+                    variant="contained"
+                    onClick={() => navigate(navigateLink)}>
+                    More..
+                </Button>
+            </Box>
+
 
         </Grid>
     )

@@ -15,10 +15,7 @@ export const AlertDialogComponent = ({ error }) => {
 
         <Box
             className="animate__animated animate__fadeIn animate__delay-0.5s"
-            sx={{
-                padding: 2,
-                border: 4,
-            }}>
+            >
             <Dialog open
                 onClose={handleClose}
             >
@@ -37,7 +34,7 @@ export const AlertDialogComponent = ({ error }) => {
                 </Box>
                 <DialogContent >
                     <DialogTitle >
-                        {`Something Went Wrong :(`}
+                        {`Something Went Wrong`}
                     </DialogTitle>
                     <Typography variant='h5' align='center' gutterBottom>
                         {error}

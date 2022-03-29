@@ -36,7 +36,7 @@ export const AutoCompleteComponent = () => {
     return (
         <Grid
             container
-            row>
+            direction="row">
             <Grid item
                 xs={12}
                 sm={12}
